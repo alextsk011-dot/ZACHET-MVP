@@ -1,0 +1,1698 @@
+<!DOCTYPE html>
+
+<html lang="ru">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0">
+<title>Zachet.KZ — Платформа взаимозачётов</title>
+<link href="https://fonts.googleapis.com/css2?family=Golos+Text:wght@400;500;600;700;900&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
+<style>
+:root {
+  --blue: #2563EB;
+  --blue-light: #3B82F6;
+  --blue-pale: #EFF6FF;
+  --green: #10B981;
+  --green-pale: #ECFDF5;
+  --orange: #F59E0B;
+  --orange-pale: #FFFBEB;
+  --red: #EF4444;
+  --red-pale: #FEF2F2;
+  --gray-50: #F9FAFB;
+  --gray-100: #F3F4F6;
+  --gray-200: #E5E7EB;
+  --gray-300: #D1D5DB;
+  --gray-400: #9CA3AF;
+  --gray-500: #6B7280;
+  --gray-600: #4B5563;
+  --gray-700: #374151;
+  --gray-800: #1F2937;
+  --gray-900: #111827;
+  --purple: #8B5CF6;
+  --cyan: #06B6D4;
+}
+
+- { margin: 0; padding: 0; box-sizing: border-box; -webkit-tap-highlight-color: transparent; }
+
+body {
+font-family: ‘Golos Text’, sans-serif;
+background: #0F172A;
+min-height: 100vh;
+display: flex;
+align-items: center;
+justify-content: center;
+padding: 20px;
+}
+
+.phone-frame {
+width: 390px;
+min-height: 844px;
+background: white;
+border-radius: 44px;
+overflow: hidden;
+position: relative;
+box-shadow: 0 0 0 12px #1E293B, 0 40px 80px rgba(0,0,0,0.6), 0 0 0 13px #334155;
+}
+
+/* SCREENS */
+.screen {
+display: none;
+position: absolute;
+top: 0; left: 0; right: 0;
+min-height: 844px;
+background: white;
+overflow-y: auto;
+animation: slideIn 0.3s ease;
+}
+.screen.active { display: block; }
+
+@keyframes slideIn {
+from { opacity: 0; transform: translateX(20px); }
+to { opacity: 1; transform: translateX(0); }
+}
+
+/* STATUS BAR */
+.status-bar {
+height: 48px;
+background: white;
+display: flex;
+align-items: center;
+justify-content: space-between;
+padding: 0 24px;
+font-size: 12px;
+font-weight: 600;
+color: var(–gray-800);
+position: sticky;
+top: 0;
+z-index: 100;
+border-bottom: 1px solid var(–gray-100);
+}
+.status-bar.dark { background: var(–gray-900); color: white; }
+.status-icons { display: flex; gap: 6px; align-items: center; font-size: 11px; }
+
+/* NAV BAR */
+.nav-bar {
+display: flex;
+align-items: center;
+padding: 12px 20px;
+border-bottom: 1px solid var(–gray-100);
+gap: 8px;
+}
+.nav-logo { font-size: 18px; font-weight: 900; color: var(–gray-900); display: flex; align-items: center; gap: 6px; }
+.nav-logo .z { color: var(–blue); font-size: 22px; }
+.nav-tabs { display: flex; gap: 4px; margin: 0 auto; }
+.nav-tab { font-size: 13px; color: var(–gray-500); padding: 4px 10px; border-radius: 20px; cursor: pointer; font-weight: 500; transition: all 0.2s; }
+.nav-tab.active, .nav-tab:hover { color: var(–blue); background: var(–blue-pale); }
+.nav-avatar { width: 30px; height: 30px; border-radius: 50%; background: var(–blue); color: white; font-size: 11px; font-weight: 700; display: flex; align-items: center; justify-content: center; cursor: pointer; }
+.nav-bell { font-size: 18px; cursor: pointer; }
+
+/* CONTENT */
+.content { padding: 20px; padding-bottom: 40px; }
+
+/* CARDS */
+.card {
+background: white;
+border: 1px solid var(–gray-200);
+border-radius: 16px;
+padding: 20px;
+margin-bottom: 12px;
+box-shadow: 0 1px 3px rgba(0,0,0,0.04);
+}
+.card-blue { background: var(–blue-pale); border-color: #BFDBFE; }
+.card-green { background: var(–green-pale); border-color: #A7F3D0; }
+.card-orange { background: var(–orange-pale); border-color: #FDE68A; }
+.card-red { background: var(–red-pale); border-color: #FECACA; }
+.card-dark { background: var(–gray-900); color: white; border-color: var(–gray-800); }
+
+/* TYPOGRAPHY */
+h1 { font-size: 26px; font-weight: 900; color: var(–gray-900); line-height: 1.2; }
+h2 { font-size: 20px; font-weight: 800; color: var(–gray-900); }
+h3 { font-size: 16px; font-weight: 700; color: var(–gray-900); }
+p { font-size: 14px; color: var(–gray-500); line-height: 1.5; }
+.label { font-size: 11px; font-weight: 700; letter-spacing: 0.08em; text-transform: uppercase; color: var(–gray-400); margin-bottom: 8px; }
+.label-blue { color: var(–blue); }
+.amount { font-family: ‘JetBrains Mono’, monospace; font-size: 28px; font-weight: 700; color: var(–gray-900); }
+.amount-green { color: var(–green); }
+.amount-blue { color: var(–blue); }
+.amount-red { color: var(–red); }
+.amount-sm { font-size: 18px; }
+.amount-xs { font-size: 14px; }
+.tenge { font-size: 0.85em; }
+
+/* BUTTONS */
+.btn {
+display: block;
+width: 100%;
+padding: 14px 20px;
+border-radius: 12px;
+font-family: ‘Golos Text’, sans-serif;
+font-size: 15px;
+font-weight: 700;
+text-align: center;
+cursor: pointer;
+border: none;
+transition: all 0.2s;
+margin-bottom: 8px;
+}
+.btn:active { transform: scale(0.97); }
+.btn-primary { background: var(–blue); color: white; }
+.btn-primary:hover { background: var(–blue-light); }
+.btn-secondary { background: var(–gray-100); color: var(–gray-700); }
+.btn-outline { background: white; color: var(–blue); border: 2px solid var(–blue); }
+.btn-outline-red { background: white; color: var(–red); border: 2px solid var(–red); }
+.btn-green { background: var(–green); color: white; }
+.btn-ghost { background: transparent; color: var(–gray-500); font-weight: 500; font-size: 14px; }
+.btn-sm { padding: 8px 14px; font-size: 13px; border-radius: 8px; width: auto; display: inline-block; margin-bottom: 0; }
+.btn-row { display: flex; gap: 8px; }
+.btn-row .btn { margin-bottom: 0; }
+
+/* FORM */
+.form-group { margin-bottom: 14px; }
+.form-label { font-size: 13px; font-weight: 600; color: var(–gray-600); margin-bottom: 6px; display: block; }
+.form-input {
+width: 100%;
+padding: 12px 14px;
+border: 1.5px solid var(–gray-200);
+border-radius: 10px;
+font-family: ‘Golos Text’, sans-serif;
+font-size: 14px;
+color: var(–gray-800);
+outline: none;
+transition: border-color 0.2s;
+background: var(–gray-50);
+}
+.form-input:focus { border-color: var(–blue); background: white; }
+.form-input::placeholder { color: var(–gray-400); }
+
+/* STATS ROW */
+.stats-row { display: grid; grid-template-columns: repeat(3, 1fr); gap: 8px; margin-bottom: 16px; }
+.stat-box { background: var(–gray-50); border-radius: 12px; padding: 12px; text-align: center; }
+.stat-num { font-family: ‘JetBrains Mono’, monospace; font-size: 20px; font-weight: 700; color: var(–blue); }
+.stat-label { font-size: 10px; color: var(–gray-500); margin-top: 2px; font-weight: 500; line-height: 1.3; }
+
+/* CHECKLIST */
+.checklist { display: flex; flex-direction: column; gap: 10px; }
+.check-item { display: flex; align-items: flex-start; gap: 10px; font-size: 13px; color: var(–gray-700); }
+.check-icon { font-size: 16px; flex-shrink: 0; margin-top: 1px; }
+
+/* PROGRESS DOTS */
+.dots { display: flex; justify-content: center; gap: 6px; margin: 20px 0; }
+.dot { width: 8px; height: 8px; border-radius: 50%; background: var(–gray-200); transition: all 0.3s; }
+.dot.active { background: var(–blue); width: 24px; border-radius: 4px; }
+
+/* SECURITY BOX */
+.security-box {
+background: white;
+border: 1.5px solid var(–blue);
+border-radius: 12px;
+padding: 14px;
+display: flex;
+align-items: flex-start;
+gap: 10px;
+margin-top: 12px;
+}
+.security-icon { font-size: 20px; flex-shrink: 0; }
+.security-text { font-size: 12px; color: var(–blue); font-weight: 600; }
+.security-sub { font-size: 11px; color: var(–gray-500); margin-top: 2px; font-weight: 400; }
+
+/* LOCK STAGES */
+.lock-stage { display: flex; gap: 12px; margin-bottom: 14px; align-items: flex-start; }
+.lock-num {
+width: 24px; height: 24px; border-radius: 50%;
+display: flex; align-items: center; justify-content: center;
+font-size: 12px; font-weight: 800; flex-shrink: 0;
+margin-top: 2px;
+}
+.lock-num-1 { background: #DBEAFE; color: var(–blue); }
+.lock-num-2 { background: #EDE9FE; color: var(–purple); }
+.lock-num-3 { background: #FEF3C7; color: var(–orange); }
+.lock-title { font-size: 14px; font-weight: 700; color: var(–gray-900); }
+.lock-desc { font-size: 12px; color: var(–gray-500); margin-top: 2px; }
+
+/* PARTICIPANTS */
+.participant {
+background: white;
+border: 1.5px solid var(–gray-200);
+border-radius: 10px;
+padding: 12px 14px;
+display: flex;
+align-items: center;
+justify-content: space-between;
+margin-bottom: 8px;
+}
+.participant.signed { border-color: #A7F3D0; background: var(–green-pale); }
+.participant.pending { border-color: #FDE68A; }
+.participant.refused { border-color: #FECACA; }
+.participant-info { display: flex; align-items: center; gap: 10px; }
+.participant-avatar {
+width: 34px; height: 34px; border-radius: 8px;
+background: var(–blue-pale);
+color: var(–blue);
+font-size: 10px; font-weight: 800;
+display: flex; align-items: center; justify-content: center;
+flex-shrink: 0;
+}
+.participant-name { font-size: 13px; font-weight: 700; color: var(–gray-900); }
+.participant-bin { font-size: 11px; color: var(–gray-400); font-family: ‘JetBrains Mono’, monospace; }
+.status-badge { font-size: 12px; font-weight: 600; }
+.status-signed { color: var(–green); }
+.status-pending { color: var(–orange); }
+.status-refused { color: var(–red); }
+
+/* TABLE */
+.table { width: 100%; border-collapse: collapse; font-size: 12px; }
+.table th { text-align: left; padding: 8px 6px; color: var(–gray-400); font-weight: 600; font-size: 10px; letter-spacing: 0.05em; text-transform: uppercase; border-bottom: 1px solid var(–gray-100); }
+.table td { padding: 10px 6px; border-bottom: 1px solid var(–gray-50); vertical-align: middle; }
+.table tr:last-child td { border-bottom: none; }
+
+/* CHAIN VIZ */
+.chain { display: flex; align-items: center; gap: 4px; overflow-x: auto; padding: 4px 0; }
+.chain-node {
+display: flex; flex-direction: column; align-items: center;
+flex-shrink: 0;
+}
+.chain-circle {
+width: 52px; height: 52px; border-radius: 50%;
+background: var(–blue-pale);
+border: 2px solid var(–blue);
+color: var(–blue);
+font-size: 11px; font-weight: 800;
+display: flex; align-items: center; justify-content: center;
+}
+.chain-name { font-size: 9px; color: var(–gray-600); margin-top: 4px; text-align: center; max-width: 56px; font-weight: 500; }
+.chain-amount { font-size: 10px; color: var(–blue); font-weight: 700; font-family: ‘JetBrains Mono’, monospace; }
+.chain-arrow { font-size: 18px; color: var(–gray-300); flex-shrink: 0; margin-bottom: 18px; }
+
+/* TIMER */
+.timer-box {
+background: var(–gray-900);
+border-radius: 12px;
+padding: 14px 16px;
+display: flex;
+align-items: center;
+justify-content: space-between;
+margin: 12px 0;
+}
+.timer-label { font-size: 12px; color: var(–gray-400); font-weight: 600; }
+.timer-value { font-family: ‘JetBrains Mono’, monospace; font-size: 22px; font-weight: 700; color: var(–orange); }
+
+/* INCOME BOXES */
+.income-row { display: grid; grid-template-columns: repeat(3, 1fr); gap: 8px; margin-bottom: 16px; }
+.income-box { background: var(–gray-50); border-radius: 12px; padding: 12px; }
+.income-box-label { font-size: 10px; color: var(–gray-400); font-weight: 700; text-transform: uppercase; letter-spacing: 0.06em; margin-bottom: 6px; }
+.income-box-val { font-family: ‘JetBrains Mono’, monospace; font-size: 16px; font-weight: 700; color: var(–green); }
+.income-box-sub { font-size: 10px; color: var(–gray-500); margin-top: 2px; }
+
+/* PLAN CARDS */
+.plan-row { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; margin-bottom: 16px; }
+.plan-card {
+border: 2px solid var(–gray-200);
+border-radius: 14px;
+padding: 16px;
+cursor: pointer;
+transition: all 0.2s;
+}
+.plan-card.recommended { border-color: var(–blue); background: var(–blue-pale); }
+.plan-card:hover { border-color: var(–blue-light); }
+.plan-badge { font-size: 10px; font-weight: 700; color: var(–blue); background: white; border-radius: 20px; padding: 2px 8px; display: inline-block; margin-bottom: 8px; }
+.plan-price { font-family: ‘JetBrains Mono’, monospace; font-size: 20px; font-weight: 700; color: var(–gray-900); }
+.plan-price-blue { color: var(–blue); }
+.plan-period { font-size: 11px; color: var(–gray-500); margin-bottom: 10px; }
+.plan-extra { font-size: 12px; font-weight: 700; color: var(–green); margin-bottom: 8px; }
+.plan-features { list-style: none; }
+.plan-features li { font-size: 11px; color: var(–gray-600); margin-bottom: 4px; padding-left: 14px; position: relative; }
+.plan-features li::before { content: ‘✓’; position: absolute; left: 0; color: var(–green); font-weight: 700; }
+.plan-features li.no::before { content: ‘✗’; color: var(–gray-300); }
+
+/* ONBOARDING HERO */
+.onb-hero {
+background: linear-gradient(135deg, var(–blue) 0%, #1D4ED8 100%);
+padding: 32px 20px 24px;
+color: white;
+text-align: center;
+}
+.onb-emoji { font-size: 48px; margin-bottom: 12px; display: block; }
+.onb-title { font-size: 24px; font-weight: 900; color: white; line-height: 1.2; }
+.onb-sub { font-size: 14px; color: rgba(255,255,255,0.75); margin-top: 6px; }
+
+/* DASH CARDS ROW */
+.dash-cards { display: grid; grid-template-columns: repeat(2, 1fr); gap: 8px; margin-bottom: 16px; }
+.dash-card { background: var(–gray-50); border-radius: 12px; padding: 14px; }
+.dash-card-val { font-family: ‘JetBrains Mono’, monospace; font-size: 20px; font-weight: 700; color: var(–gray-900); }
+.dash-card-val.blue { color: var(–blue); }
+.dash-card-val.green { color: var(–green); }
+.dash-card-label { font-size: 10px; color: var(–gray-500); margin-top: 4px; font-weight: 500; text-transform: uppercase; letter-spacing: 0.05em; }
+.dash-card-sub { font-size: 11px; color: var(–gray-400); margin-top: 2px; }
+
+/* WARNING BANNER */
+.warning-banner {
+background: var(–orange-pale);
+border: 1.5px solid #FDE68A;
+border-radius: 12px;
+padding: 12px 14px;
+display: flex;
+align-items: flex-start;
+gap: 10px;
+margin-bottom: 14px;
+}
+.warning-icon { font-size: 18px; flex-shrink: 0; }
+.warning-text { font-size: 12px; color: var(–gray-700); flex: 1; }
+.warning-btn { background: var(–orange); color: white; font-size: 11px; font-weight: 700; padding: 5px 10px; border-radius: 6px; border: none; cursor: pointer; flex-shrink: 0; font-family: ‘Golos Text’, sans-serif; }
+
+/* UPLOAD ZONE */
+.upload-zone {
+border: 2px dashed var(–gray-300);
+border-radius: 14px;
+padding: 32px 20px;
+text-align: center;
+margin-bottom: 14px;
+cursor: pointer;
+transition: all 0.2s;
+}
+.upload-zone:hover { border-color: var(–blue); background: var(–blue-pale); }
+.upload-icon { font-size: 36px; margin-bottom: 8px; }
+.upload-text { font-size: 14px; font-weight: 600; color: var(–gray-700); }
+.upload-sub { font-size: 12px; color: var(–gray-400); margin-top: 4px; }
+.file-types { display: flex; gap: 8px; justify-content: center; margin-top: 10px; }
+.file-tag { background: var(–gray-100); color: var(–gray-600); font-size: 11px; font-weight: 700; padding: 3px 8px; border-radius: 6px; }
+
+/* PROGRESS BAR */
+.progress-bar { background: var(–gray-100); border-radius: 100px; height: 6px; margin: 8px 0; overflow: hidden; }
+.progress-fill { height: 100%; border-radius: 100px; background: linear-gradient(90deg, var(–blue), var(–cyan)); transition: width 0.5s; }
+
+/* HISTORY ITEM */
+.history-item {
+display: flex; align-items: center; gap: 12px;
+padding: 14px 0;
+border-bottom: 1px solid var(–gray-100);
+cursor: pointer;
+}
+.history-item:last-child { border-bottom: none; }
+.history-icon { width: 36px; height: 36px; border-radius: 50%; display: flex; align-items: center; justify-content: center; font-size: 16px; flex-shrink: 0; }
+.hi-success { background: var(–green-pale); }
+.hi-fail { background: var(–red-pale); }
+.hi-cancel { background: var(–gray-100); }
+.history-info { flex: 1; }
+.history-title { font-size: 13px; font-weight: 700; color: var(–gray-900); }
+.history-sub { font-size: 11px; color: var(–gray-400); margin-top: 2px; }
+.history-right { text-align: right; }
+.history-amount { font-family: ‘JetBrains Mono’, monospace; font-size: 13px; font-weight: 700; color: var(–gray-900); }
+.history-status { font-size: 11px; font-weight: 600; margin-top: 2px; }
+.hs-success { color: var(–green); }
+.hs-fail { color: var(–red); }
+.hs-cancel { color: var(–gray-400); }
+
+/* ENCRYPTED DISPLAY */
+.encrypted-box {
+background: var(–gray-900);
+border-radius: 10px;
+padding: 12px;
+font-family: ‘JetBrains Mono’, monospace;
+font-size: 10px;
+color: #4ADE80;
+line-height: 1.6;
+position: relative;
+overflow: hidden;
+margin-bottom: 12px;
+}
+.encrypted-badge {
+position: absolute; top: 8px; right: 8px;
+background: #166534; color: #4ADE80;
+font-size: 9px; font-weight: 700; padding: 2px 6px; border-radius: 4px;
+}
+.algo-result {
+background: var(–green-pale);
+border: 1.5px solid #A7F3D0;
+border-radius: 10px;
+padding: 12px;
+margin-bottom: 8px;
+}
+.algo-row { display: flex; align-items: center; gap: 8px; margin-bottom: 6px; font-size: 12px; }
+.algo-row:last-child { margin-bottom: 0; }
+.algo-check { color: var(–green); font-weight: 700; }
+.algo-key { color: var(–green); font-weight: 700; }
+.algo-val { color: var(–gray-600); }
+
+/* DIVIDER */
+.divider { height: 1px; background: var(–gray-100); margin: 14px 0; }
+
+/* ONBOARDING NAV */
+.onb-nav {
+padding: 16px 20px;
+display: flex;
+justify-content: space-between;
+align-items: center;
+border-top: 1px solid var(–gray-100);
+position: sticky;
+bottom: 0;
+background: white;
+}
+
+/* WHAT NEXT */
+.what-next { margin-top: 14px; }
+.what-next-title { font-size: 11px; font-weight: 700; color: var(–blue); text-transform: uppercase; letter-spacing: 0.08em; margin-bottom: 10px; display: flex; align-items: center; gap: 6px; }
+.next-item { display: flex; align-items: center; gap: 8px; font-size: 13px; color: var(–gray-700); margin-bottom: 10px; cursor: pointer; }
+.next-item:hover { color: var(–blue); }
+.next-arrow { color: var(–blue); font-weight: 700; }
+
+/* PROFILE */
+.profile-header { text-align: center; padding: 20px; border-bottom: 1px solid var(–gray-100); }
+.profile-avatar-lg {
+width: 64px; height: 64px; border-radius: 20px;
+background: var(–blue); color: white;
+font-size: 20px; font-weight: 800;
+display: flex; align-items: center; justify-content: center;
+margin: 0 auto 10px;
+}
+.profile-name { font-size: 18px; font-weight: 800; color: var(–gray-900); }
+.profile-role { font-size: 13px; color: var(–gray-500); }
+.profile-badge { display: inline-block; background: var(–blue-pale); color: var(–blue); font-size: 11px; font-weight: 700; padding: 3px 10px; border-radius: 20px; margin-top: 6px; }
+
+/* COMPANY ROW */
+.company-row {
+display: flex; align-items: center; justify-content: space-between;
+padding: 12px 0;
+border-bottom: 1px solid var(–gray-100);
+}
+.company-row:last-child { border-bottom: none; }
+.company-name { font-size: 14px; font-weight: 700; color: var(–gray-900); }
+.company-bin { font-size: 11px; color: var(–gray-400); font-family: ‘JetBrains Mono’, monospace; margin-top: 2px; }
+.company-auto { font-size: 10px; color: var(–gray-400); }
+
+/* REFERRAL */
+.referral-box {
+background: var(–gray-50);
+border-radius: 12px;
+padding: 14px;
+display: flex;
+align-items: center;
+gap: 10px;
+margin-top: 14px;
+}
+.referral-link { font-family: ‘JetBrains Mono’, monospace; font-size: 12px; color: var(–blue); font-weight: 600; flex: 1; }
+.copy-btn { background: var(–blue); color: white; font-size: 11px; font-weight: 700; padding: 6px 12px; border-radius: 8px; border: none; cursor: pointer; font-family: ‘Golos Text’, sans-serif; }
+
+/* STEP LIST */
+.step-item { display: flex; gap: 12px; margin-bottom: 16px; }
+.step-num { width: 28px; height: 28px; border-radius: 50%; background: var(–blue-pale); color: var(–blue); font-size: 13px; font-weight: 800; display: flex; align-items: center; justify-content: center; flex-shrink: 0; }
+.step-num.done { background: var(–green-pale); color: var(–green); }
+.step-content { flex: 1; }
+.step-title { font-size: 14px; font-weight: 700; color: var(–gray-900); }
+.step-sub { font-size: 12px; color: var(–gray-500); margin-top: 2px; }
+
+/* NETWORK BAR */
+.network-bar { margin: 12px 0; }
+.network-label { display: flex; justify-content: space-between; font-size: 12px; color: var(–gray-600); margin-bottom: 6px; }
+.network-label span:last-child { font-weight: 700; color: var(–blue); }
+
+/* SUCCESS SCREEN */
+.success-hero { text-align: center; padding: 32px 20px 20px; }
+.success-emoji { font-size: 56px; margin-bottom: 12px; display: block; }
+.success-title { font-size: 22px; font-weight: 900; color: var(–gray-900); }
+.success-sub { font-size: 14px; color: var(–gray-500); margin-top: 6px; }
+
+/* ANALYSIS SEARCH */
+.search-stats { margin-bottom: 14px; }
+.search-row { display: flex; justify-content: space-between; align-items: center; padding: 10px 0; border-bottom: 1px solid var(–gray-100); font-size: 13px; }
+.search-key { color: var(–gray-600); }
+.search-val { font-weight: 700; color: var(–gray-900); }
+.search-val-blue { color: var(–blue); font-family: ‘JetBrains Mono’, monospace; }
+
+/* RESULT MY */
+.result-row { display: flex; justify-content: space-between; align-items: center; padding: 12px 0; border-bottom: 1px solid var(–gray-100); }
+.result-key { font-size: 13px; color: var(–gray-600); }
+.result-val { font-family: ‘JetBrains Mono’, monospace; font-size: 15px; font-weight: 700; color: var(–gray-900); }
+.result-val-green { color: var(–green); }
+.result-total { display: flex; justify-content: space-between; align-items: center; padding: 14px 0 0; }
+.result-total-key { font-size: 15px; font-weight: 700; color: var(–gray-900); }
+.result-total-val { font-family: ‘JetBrains Mono’, monospace; font-size: 20px; font-weight: 800; color: var(–blue); }
+
+/* NOTIFICATION DOT */
+.notif-dot { width: 8px; height: 8px; border-radius: 50%; background: var(–red); position: absolute; top: -2px; right: -2px; }
+
+/* SCREEN COUNTER */
+.screen-counter {
+position: fixed;
+bottom: 20px;
+left: 50%;
+transform: translateX(-50%);
+background: rgba(15,23,42,0.8);
+color: white;
+font-size: 11px;
+padding: 6px 14px;
+border-radius: 20px;
+font-family: ‘JetBrains Mono’, monospace;
+backdrop-filter: blur(10px);
+z-index: 1000;
+white-space: nowrap;
+}
+
+/* PRELOCK BADGE */
+.lock-badge {
+display: inline-flex; align-items: center; gap: 6px;
+padding: 6px 12px; border-radius: 20px;
+font-size: 13px; font-weight: 700;
+margin-bottom: 8px;
+}
+.lb-pre { background: #DBEAFE; color: var(–blue); }
+.lb-intent { background: #EDE9FE; color: var(–purple); }
+.lb-hard { background: #FEF3C7; color: var(–orange); }
+
+.lock-meta { display: grid; grid-template-columns: 1fr 1fr; gap: 8px; margin: 12px 0; }
+.lock-meta-item { background: var(–gray-50); border-radius: 8px; padding: 10px; display: flex; align-items: center; gap: 6px; font-size: 12px; font-weight: 600; color: var(–gray-700); }
+
+/* INFO BANNER */
+.info-banner {
+background: var(–blue-pale);
+border: 1.5px solid #BFDBFE;
+border-radius: 12px;
+padding: 12px 14px;
+display: flex;
+align-items: flex-start;
+gap: 10px;
+margin-bottom: 14px;
+}
+.info-icon { font-size: 18px; flex-shrink: 0; }
+.info-text { font-size: 12px; color: var(–blue); font-weight: 500; line-height: 1.5; }
+
+/* SALARY BREAKDOWN */
+.salary-card {
+background: linear-gradient(135deg, #0F172A 0%, #1E3A5F 100%);
+border-radius: 20px;
+padding: 24px 20px;
+text-align: center;
+margin-bottom: 16px;
+}
+.salary-label { font-size: 12px; color: rgba(255,255,255,0.5); font-weight: 600; text-transform: uppercase; letter-spacing: 0.08em; margin-bottom: 8px; }
+.salary-amount { font-family: ‘JetBrains Mono’, monospace; font-size: 36px; font-weight: 900; color: white; }
+.salary-sub { font-size: 12px; color: rgba(255,255,255,0.5); margin-top: 4px; }
+
+/* TRANSACTIONS */
+.tx-row {
+display: grid;
+grid-template-columns: 1.5fr 1fr 1fr 1fr;
+gap: 4px;
+padding: 10px 0;
+border-bottom: 1px solid var(–gray-100);
+font-size: 12px;
+}
+.tx-row:last-child { border-bottom: none; }
+.tx-date { color: var(–gray-500); }
+.tx-amount { font-family: ‘JetBrains Mono’, monospace; font-weight: 700; color: var(–gray-900); }
+.tx-source { color: var(–blue); }
+.tx-status-paid { color: var(–green); font-weight: 600; }
+.tx-status-proc { color: var(–orange); font-weight: 600; }
+
+/* LOCKED AMOUNT */
+.locked-amount { margin: 14px 0; }
+.locked-num { font-family: ‘JetBrains Mono’, monospace; font-size: 32px; font-weight: 900; color: var(–gray-900); line-height: 1; }
+.locked-sub { font-size: 12px; color: var(–gray-500); margin-top: 4px; }
+
+/* HINT BOX */
+.hint-box {
+background: var(–gray-50);
+border-radius: 10px;
+padding: 12px 14px;
+display: flex;
+align-items: flex-start;
+gap: 8px;
+margin-top: 12px;
+}
+.hint-icon { font-size: 16px; flex-shrink: 0; }
+.hint-text { font-size: 12px; color: var(–gray-600); line-height: 1.5; }
+
+/* SIGN STEPS */
+.sign-step {
+display: flex; align-items: flex-start; gap: 12px;
+padding: 12px 0;
+border-bottom: 1px solid var(–gray-100);
+}
+.sign-step-num {
+width: 26px; height: 26px; border-radius: 50%;
+background: var(–blue-pale); color: var(–blue);
+font-size: 12px; font-weight: 800;
+display: flex; align-items: center; justify-content: center;
+flex-shrink: 0;
+}
+.sign-step-num.done { background: var(–green-pale); color: var(–green); }
+.sign-step-content { flex: 1; }
+.sign-step-title { font-size: 14px; font-weight: 700; color: var(–gray-900); }
+.sign-step-sub { font-size: 12px; color: var(–gray-400); margin-top: 2px; }
+
+/* DOC BUTTON */
+.doc-btn {
+width: 100%;
+padding: 13px;
+border-radius: 12px;
+font-family: ‘Golos Text’, sans-serif;
+font-size: 14px;
+font-weight: 700;
+display: flex;
+align-items: center;
+justify-content: center;
+gap: 8px;
+cursor: pointer;
+margin-bottom: 8px;
+border: 2px solid var(–blue);
+background: white;
+color: var(–blue);
+transition: all 0.2s;
+}
+.doc-btn:hover { background: var(–blue-pale); }
+.doc-btn-green { border-color: var(–green); color: var(–green); }
+.doc-btn-green:hover { background: var(–green-pale); }
+
+/* SCREEN SELECTOR */
+.screen-nav {
+position: fixed;
+top: 20px;
+right: 20px;
+z-index: 1000;
+display: flex;
+flex-direction: column;
+gap: 4px;
+max-height: 90vh;
+overflow-y: auto;
+}
+.screen-nav-btn {
+background: rgba(15,23,42,0.85);
+color: white;
+font-size: 10px;
+padding: 5px 10px;
+border-radius: 6px;
+cursor: pointer;
+white-space: nowrap;
+border: none;
+font-family: ‘Golos Text’, sans-serif;
+transition: background 0.2s;
+text-align: left;
+backdrop-filter: blur(10px);
+}
+.screen-nav-btn:hover, .screen-nav-btn.active { background: var(–blue); }
+
+/* MOBILE HINT */
+@media (max-width: 600px) {
+body { padding: 0; background: white; }
+.phone-frame { width: 100%; min-height: 100vh; border-radius: 0; box-shadow: none; }
+.screen-nav { display: none; }
+.screen-counter { display: none; }
+}
+</style>
+
+</head>
+<body>
+
+<!-- SCREEN NAVIGATION -->
+
+<div class="screen-nav" id="screenNav">
+  <button class="screen-nav-btn active" onclick="showScreen('onb1')">Онбординг 1/3</button>
+  <button class="screen-nav-btn" onclick="showScreen('onb2')">Онбординг 2/3</button>
+  <button class="screen-nav-btn" onclick="showScreen('onb3')">Онбординг 3/3</button>
+  <button class="screen-nav-btn" onclick="showScreen('reg')">1. Регистрация</button>
+  <button class="screen-nav-btn" onclick="showScreen('sub')">2. Подписка</button>
+  <button class="screen-nav-btn" onclick="showScreen('dash')">3. Dashboard</button>
+  <button class="screen-nav-btn" onclick="showScreen('upload')">4. Загрузка</button>
+  <button class="screen-nav-btn" onclick="showScreen('uploaded')">4b. Данные получены</button>
+  <button class="screen-nav-btn" onclick="showScreen('freshcheck')">5. Проверка данных</button>
+  <button class="screen-nav-btn" onclick="showScreen('search')">6. Поиск цепочек</button>
+  <button class="screen-nav-btn" onclick="showScreen('prelock')">6b. Pre-Lock</button>
+  <button class="screen-nav-btn" onclick="showScreen('debtlock')">7. Debt Lock V3</button>
+  <button class="screen-nav-btn" onclick="showScreen('intentlock')">7b. Intent Lock</button>
+  <button class="screen-nav-btn" onclick="showScreen('hardlock')">7c. Hard Lock</button>
+  <button class="screen-nav-btn" onclick="showScreen('result')">8. Мой результат</button>
+  <button class="screen-nav-btn" onclick="showScreen('tariff')">8b. Выбор тарифа</button>
+  <button class="screen-nav-btn" onclick="showScreen('sign')">9. Подписание</button>
+  <button class="screen-nav-btn" onclick="showScreen('signstatus')">9b. Статус подписей</button>
+  <button class="screen-nav-btn" onclick="showScreen('done')">10. Завершён</button>
+  <button class="screen-nav-btn" onclick="showScreen('history')">11. История</button>
+  <button class="screen-nav-btn" onclick="showScreen('failtime')">11a. Не подписал</button>
+  <button class="screen-nav-btn" onclick="showScreen('failrefuse')">11b. Отказался</button>
+  <button class="screen-nav-btn" onclick="showScreen('failchain')">11c. Цепочка не нашлась</button>
+  <button class="screen-nav-btn" onclick="showScreen('income')">12. Доходы</button>
+  <button class="screen-nav-btn" onclick="showScreen('profile')">13. Профиль</button>
+</div>
+
+<div class="phone-frame">
+
+<!-- ================== ONBOARDING 1 ================== -->
+
+<div class="screen active" id="screen-onb1">
+  <div class="status-bar"><span>9:41</span><div class="status-icons">📶 🔋</div></div>
+  <div style="background: linear-gradient(135deg, #1E3A8A 0%, #2563EB 100%); padding: 36px 24px 28px; text-align: center;">
+    <div style="font-size: 52px; margin-bottom: 16px;">💰</div>
+    <h1 style="color: white; font-size: 26px;">В вашей базе<br>спрятаны деньги</h1>
+    <p style="color: rgba(255,255,255,0.7); margin-top: 8px; font-size: 14px;">Долги компаний можно закрыть без живых денег</p>
+  </div>
+  <div class="content">
+    <div class="stats-row" style="margin-bottom: 20px;">
+      <div class="stat-box"><div class="stat-num">47</div><div class="stat-label">компаний в сети</div></div>
+      <div class="stat-box"><div class="stat-num" style="font-size:15px;">27.5M</div><div class="stat-label">₸ уже зачтено</div></div>
+      <div class="stat-box"><div class="stat-num">24/7</div><div class="stat-label">автопоиск цепочек</div></div>
+    </div>
+    <div class="checklist">
+      <div class="check-item"><span class="check-icon">🔍</span><span>Загружаете отчёт из 1С — система сама ищет цепочки зачёта</span></div>
+      <div class="check-item"><span class="check-icon" style="color:var(--green);">✓</span><span>Долги закрываются без денег — через взаимный зачёт компаний</span></div>
+      <div class="check-item"><span class="check-icon">💰</span><span>Бухгалтер зарабатывает с каждой закрытой сделки</span></div>
+    </div>
+    <div class="dots"><div class="dot active"></div><div class="dot"></div><div class="dot"></div></div>
+    <button class="btn btn-primary" onclick="showScreen('onb2')">Далее →</button>
+    <button class="btn btn-ghost" onclick="showScreen('reg')">Пропустить</button>
+  </div>
+</div>
+
+<!-- ================== ONBOARDING 2 ================== -->
+
+<div class="screen" id="screen-onb2">
+  <div class="status-bar"><span>9:41</span><div class="status-icons">📶 🔋</div></div>
+  <div style="background: linear-gradient(135deg, #1E3A8A 0%, #2563EB 100%); padding: 36px 24px 28px; text-align: center;">
+    <div style="font-size: 52px; margin-bottom: 16px;">🔒</div>
+    <h1 style="color: white; font-size: 24px;">Debt Lock —<br>безопасно для всех</h1>
+    <p style="color: rgba(255,255,255,0.7); margin-top: 8px; font-size: 13px;">Ваши данные не видит никто. Зачёт — только с согласия всех сторон</p>
+  </div>
+  <div class="content">
+    <div class="lock-stage"><div class="lock-num lock-num-1">1</div><div><div class="lock-title">Pre-Lock <span style="color:var(--blue);font-size:12px;">15 мин</span></div><div class="lock-desc">Смотрите цепочку. Ничего не блокируется</div></div></div>
+    <div class="lock-stage"><div class="lock-num lock-num-2">2</div><div><div class="lock-title">Intent Lock <span style="color:var(--purple);font-size:12px;">2ч</span></div><div class="lock-desc">Вы решили продолжить. Ждём всех участников</div></div></div>
+    <div class="lock-stage"><div class="lock-num lock-num-3">3</div><div><div class="lock-title">Hard Lock <span style="color:var(--orange);font-size:12px;">48ч</span></div><div class="lock-desc">Все согласны. Юридическая сила. Документы</div></div></div>
+    <div class="security-box">
+      <div class="security-icon">🛡️</div>
+      <div><div class="security-text">Данные зашифрованы AES-256</div><div class="security-sub">Серверы в Казахстане. Даже разработчик не видит ваши финансовые данные</div></div>
+    </div>
+    <div class="dots"><div class="dot"></div><div class="dot active"></div><div class="dot"></div></div>
+    <button class="btn btn-primary" onclick="showScreen('onb3')">Далее →</button>
+    <button class="btn btn-ghost" onclick="showScreen('reg')">Пропустить</button>
+  </div>
+</div>
+
+<!-- ================== ONBOARDING 3 ================== -->
+
+<div class="screen" id="screen-onb3">
+  <div class="status-bar"><span>9:41</span><div class="status-icons">📶 🔋</div></div>
+  <div style="background: linear-gradient(135deg, #064E3B 0%, #059669 100%); padding: 36px 24px 28px; text-align: center;">
+    <div style="font-size: 52px; margin-bottom: 16px;">📈</div>
+    <h1 style="color: white; font-size: 24px;">Вы зарабатываете<br>как бухгалтер</h1>
+    <p style="color: rgba(255,255,255,0.7); margin-top: 8px;">Три источника дохода с каждого клиента</p>
+  </div>
+  <div class="content">
+    <div class="stats-row" style="margin-bottom: 20px;">
+      <div class="stat-box"><div class="stat-num" style="color:var(--blue);">~5к</div><div class="stat-label">₸ с каждой подписки</div></div>
+      <div class="stat-box"><div class="stat-num" style="color:var(--green);">30к</div><div class="stat-label">₸ за Pro-сделку</div></div>
+      <div class="stat-box"><div class="stat-num" style="color:var(--cyan);">+бонус</div><div class="stat-label">за каждого реферала</div></div>
+    </div>
+    <div class="checklist">
+      <div class="check-item"><span class="check-icon">🧮</span><span>Оксана из Алматы уже зарабатывает <strong>237 000 ₸/мес</strong> на 17 компаниях</span></div>
+      <div class="check-item"><span class="check-icon">⚡</span><span>Среднее время первой сделки — <strong>3 дня</strong> после загрузки данных</span></div>
+    </div>
+    <div class="dots"><div class="dot"></div><div class="dot"></div><div class="dot active"></div></div>
+    <button class="btn btn-primary" onclick="showScreen('reg')">Создать аккаунт →</button>
+    <button class="btn btn-ghost" onclick="showScreen('reg')">Войти</button>
+  </div>
+</div>
+
+<!-- ================== SCREEN 1: REGISTRATION ================== -->
+
+<div class="screen" id="screen-reg">
+  <div class="status-bar"><span>9:41</span><div class="status-icons">📶 🔋</div></div>
+  <div class="content" style="padding-top: 32px;">
+    <div style="text-align: center; margin-bottom: 28px;">
+      <div style="font-size: 28px; font-weight: 900; color: var(--gray-900); display: flex; align-items: center; justify-content: center; gap: 8px;"><span style="color:var(--blue); font-size:32px;">Z</span> Zachet.KZ</div>
+      <h2 style="margin-top: 16px;">Создать аккаунт</h2>
+      <p style="margin-top: 4px;">Платформа взаимозачётов для бухгалтеров</p>
+    </div>
+    <div class="form-group"><label class="form-label">Email</label><input class="form-input" type="email" placeholder="oxana@example.com"></div>
+    <div class="form-group"><label class="form-label">Телефон</label><input class="form-input" type="tel" placeholder="+7 (___) ___-__-__"></div>
+    <div class="form-group"><label class="form-label">Пароль</label><input class="form-input" type="password" placeholder="Минимум 8 символов"></div>
+    <button class="btn btn-primary" style="margin-top: 8px;" onclick="showScreen('sub')">Создать аккаунт</button>
+    <p style="text-align: center; font-size: 13px; color: var(--gray-500); margin-top: 8px;">Уже есть аккаунт? <span style="color:var(--blue); font-weight:700; cursor:pointer;" onclick="showScreen('dash')">Войти</span></p>
+    <div class="security-box" style="margin-top: 20px;">
+      <span class="security-icon">🔒</span>
+      <div><div class="security-text">Данные защищены AES-256. Серверы в Казахстане.</div><div class="security-sub">Доступ только у владельца аккаунта.</div></div>
+    </div>
+  </div>
+</div>
+
+<!-- ================== SCREEN 2: SUBSCRIPTION ================== -->
+
+<div class="screen" id="screen-sub">
+  <div class="status-bar"><span>9:41</span><div class="status-icons">📶 🔋</div></div>
+  <div class="content" style="padding-top: 32px; text-align: center;">
+    <div style="font-size: 48px; margin-bottom: 12px;">🔑</div>
+    <h2>Активируйте подписку</h2>
+    <p style="margin-top: 6px; margin-bottom: 24px;">Для загрузки данных и поиска взаимозачётов необходима активная подписка</p>
+    <div class="plan-row">
+      <div class="plan-card" onclick="showScreen('dash')">
+        <div class="plan-price">20 000 <span class="tenge" style="font-size:16px;">₸</span></div>
+        <div class="plan-period">в месяц</div>
+        <ul class="plan-features">
+          <li>Поиск цепочек 24/7</li>
+          <li>Данные участников</li>
+          <li>Самостоятельный зачёт</li>
+        </ul>
+      </div>
+      <div class="plan-card recommended" onclick="showScreen('dash')">
+        <div class="plan-badge">Рекомендуем</div>
+        <div class="plan-price plan-price-blue">20 000 <span class="tenge" style="font-size:16px;">₸</span></div>
+        <div class="plan-period">в месяц</div>
+        <div class="plan-extra">+ 30 000 ₸ за сделку</div>
+        <ul class="plan-features">
+          <li>Всё из Base</li>
+          <li>ЭЦП + Акт PDF</li>
+          <li>XML для 1С</li>
+          <li>Юр. чистота</li>
+        </ul>
+      </div>
+    </div>
+    <button class="btn btn-primary" onclick="showScreen('dash')">Оформить подписку</button>
+  </div>
+</div>
+
+<!-- ================== SCREEN 3: DASHBOARD ================== -->
+
+<div class="screen" id="screen-dash">
+  <div class="status-bar"><span>9:41</span><div class="status-icons">📶 🔋</div></div>
+  <div class="nav-bar">
+    <div class="nav-logo"><span class="z">Z</span>Zachet.KZ</div>
+    <div class="nav-tabs">
+      <span class="nav-tab active" onclick="showScreen('dash')">Главная</span>
+      <span class="nav-tab" onclick="showScreen('history')">Сделки</span>
+      <span class="nav-tab" onclick="showScreen('income')">Доходы</span>
+    </div>
+    <div style="position:relative;"><span class="nav-bell" onclick="">🔔</span><div class="notif-dot"></div></div>
+    <div class="nav-avatar" onclick="showScreen('profile')">ОГ</div>
+  </div>
+  <div class="content">
+    <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:16px;">
+      <div><h2>Здравствуйте, Оксана! 👋</h2><p style="font-size:12px;">Система ищет взаимозачёты 24/7 автоматически</p></div>
+      <button class="btn btn-primary btn-sm" onclick="showScreen('upload')">+ Загрузить</button>
+    </div>
+    <div class="dash-cards">
+      <div class="dash-card"><div class="dash-card-val">17</div><div class="dash-card-label">Компаний</div><div class="dash-card-sub">данные актуальны</div></div>
+      <div class="dash-card"><div class="dash-card-val blue">3</div><div class="dash-card-label">Активных зачётов</div><div class="dash-card-sub">в процессе</div></div>
+      <div class="dash-card"><div class="dash-card-val green">27.5M</div><div class="dash-card-label">Всего зачтено ₸</div><div class="dash-card-sub">за всё время</div></div>
+      <div class="dash-card"><div class="dash-card-val" style="color:var(--orange);">41 000</div><div class="dash-card-label">Ваш доход ₸</div><div class="dash-card-sub">накоплено</div></div>
+    </div>
+    <div class="warning-banner">
+      <span class="warning-icon">⚠️</span>
+      <div class="warning-text"><strong>Данные 3 компаний устарели</strong><br>ТОО «СитаСервис», «АгроТрейд», «БестАгро» — более 20 дней</div>
+      <button class="warning-btn" onclick="showScreen('upload')">Обновить</button>
+    </div>
+    <div class="label">Активные взаимозачёты</div>
+    <table class="table">
+      <thead><tr><th>№</th><th>Компания</th><th>Сумма</th><th>Статус</th><th>Debt Lock</th><th></th></tr></thead>
+      <tbody>
+        <tr>
+          <td style="color:var(--gray-400);">#2481</td>
+          <td style="font-weight:700; font-size:11px;">ТОО «Семигаз»</td>
+          <td style="font-family:'JetBrains Mono'; font-weight:700; font-size:11px; color:var(--blue);">12M ₸</td>
+          <td style="font-size:10px; color:var(--orange);">Ожид. подписи</td>
+          <td style="font-family:'JetBrains Mono'; font-size:10px; color:var(--orange);">32:14</td>
+          <td><button class="btn btn-primary btn-sm" style="font-size:10px; padding:5px 8px;" onclick="showScreen('sign')">Подписать</button></td>
+        </tr>
+        <tr>
+          <td style="color:var(--gray-400);">#2479</td>
+          <td style="font-weight:700; font-size:11px;">ТОО «АгроТрейд»</td>
+          <td style="font-family:'JetBrains Mono'; font-weight:700; font-size:11px; color:var(--blue);">8.4M ₸</td>
+          <td style="font-size:10px; color:var(--blue);">Pre-Lock</td>
+          <td style="font-family:'JetBrains Mono'; font-size:10px; color:var(--blue);">00:08</td>
+          <td><button class="btn btn-outline btn-sm" style="font-size:10px; padding:5px 8px;" onclick="showScreen('prelock')">Смотреть</button></td>
+        </tr>
+        <tr>
+          <td style="color:var(--gray-400);">#2477</td>
+          <td style="font-weight:700; font-size:11px;">ТОО «Логист+»</td>
+          <td style="font-family:'JetBrains Mono'; font-weight:700; font-size:11px; color:var(--blue);">7.1M ₸</td>
+          <td style="font-size:10px; color:var(--orange);">Ожид. оплаты</td>
+          <td style="font-family:'JetBrains Mono'; font-size:10px; color:var(--gray-400);">11:30</td>
+          <td><button class="btn btn-secondary btn-sm" style="font-size:10px; padding:5px 8px;">Оплатить</button></td>
+        </tr>
+      </tbody>
+    </table>
+  </div>
+</div>
+
+<!-- ================== SCREEN 4: UPLOAD ================== -->
+
+<div class="screen" id="screen-upload">
+  <div class="status-bar"><span>9:41</span><div class="status-icons">📶 🔋</div></div>
+  <div class="nav-bar">
+    <span style="font-size:20px; cursor:pointer;" onclick="showScreen('dash')">←</span>
+    <div class="nav-logo" style="margin:auto;"><span class="z">Z</span>Zachet.KZ</div>
+    <div class="nav-avatar">ОГ</div>
+  </div>
+  <div class="content">
+    <div class="label">Загрузка данных</div>
+    <div class="info-banner"><span class="info-icon">ℹ️</span><div class="info-text"><strong>Данные загружаются автоматически.</strong> БИН компании определяется из документа автоматически. Вам не нужно вводить его вручную.</div></div>
+    <div class="upload-zone" onclick="showScreen('uploaded')">
+      <div class="upload-icon">☁️</div>
+      <div class="upload-text">Перетащите файл сюда</div>
+      <div class="upload-sub">Из 1С: ОСВ / 3310 / 1210</div>
+      <div class="file-types"><span class="file-tag">XML</span><span class="file-tag">Excel</span></div>
+    </div>
+    <button class="btn btn-primary" onclick="showScreen('uploaded')">Выбрать файл</button>
+    <div class="security-box" style="margin-top: 8px;">
+      <span class="security-icon">🔒</span>
+      <div><div class="security-text">Файл шифруется AES-256 немедленно после загрузки.</div><div class="security-sub">Ни один сотрудник платформы не имеет доступа к исходным данным. Алгоритм работает с зашифрованной версией.</div></div>
+    </div>
+  </div>
+</div>
+
+<!-- ================== SCREEN 4b: UPLOADED ================== -->
+
+<div class="screen" id="screen-uploaded">
+  <div class="status-bar"><span>9:41</span><div class="status-icons">📶 🔋</div></div>
+  <div class="nav-bar">
+    <span style="font-size:20px; cursor:pointer;" onclick="showScreen('upload')">←</span>
+    <div class="nav-logo" style="margin:auto;"><span class="z">Z</span>Zachet.KZ</div>
+    <div class="nav-avatar">ОГ</div>
+  </div>
+  <div class="content">
+    <div class="label">Данные получены</div>
+    <div class="card card-green" style="margin-bottom:16px;">
+      <div style="display:flex; align-items:center; gap:10px;">
+        <span style="font-size:24px;">✅</span>
+        <div>
+          <div style="font-size:14px; font-weight:700; color:var(--green);">Файл успешно загружен и зашифрован</div>
+          <div style="font-size:12px; color:var(--gray-500); margin-top:2px;">БИН определён автоматически: <span style="font-family:'JetBrains Mono'; font-weight:700;">120840012345</span> · ТОО «Семигаз»</div>
+        </div>
+      </div>
+    </div>
+    <div class="label">КАК ВИДИТ ДАННЫЕ РАЗРАБОТЧИК (зашифровано):</div>
+    <div class="encrypted-box">
+      <div class="encrypted-badge">🔒 AES-256</div>
+      U2FsdGVkX1+mK9xQpL3v8n2RwX4j7Yc!!" 4e8f2b1d9a3c7e5f0b6d4a2c8e1f3b5d!!"<br>
+      Aj7Yc4e8f2b1d9a3Q/pL3v8n2RwXmK9x!!" 1f3b5d4e8f2b1d9a3c7e5f0b6d4a2c8e!!"<br>
+      xQpL3v8n2RwX4j7YcU2FsdGVkX1+mK9!!"<br>
+      <div style="margin-top:8px; color:#86EFAC; font-size:9px;">Исходные данные: зашифрованы и недоступны</div>
+    </div>
+    <div class="label" style="margin-bottom:8px;">ЧТО ВИДИТ АЛГОРИТМ (обработано):</div>
+    <div class="algo-result">
+      <div class="algo-row"><span class="algo-check">✓</span><span class="algo-key">Компания идентифицирована:</span><span class="algo-val" style="margin-left:4px;">ТОО «Семигаз»</span></div>
+      <div class="algo-row"><span class="algo-check">✓</span><span class="algo-key">Контрагентов найдено:</span><span class="algo-val" style="margin-left:4px; color:var(--blue); font-weight:700;">27</span></div>
+      <div class="algo-row"><span class="algo-check">✓</span><span class="algo-key">Задолженностей:</span><span class="algo-val" style="margin-left:4px; color:var(--blue); font-weight:700;">132 записи</span></div>
+      <div class="algo-row"><span class="algo-check">✓</span><span class="algo-key">Объём:</span><span class="algo-val" style="margin-left:4px; color:var(--blue); font-weight:700; font-family:'JetBrains Mono';">86 400 000 ₸</span></div>
+    </div>
+    <button class="btn btn-primary" style="margin-top:12px;" onclick="showScreen('freshcheck')">Далее →</button>
+  </div>
+</div>
+
+<!-- ================== SCREEN 5: FRESHNESS CHECK ================== -->
+
+<div class="screen" id="screen-freshcheck">
+  <div class="status-bar"><span>9:41</span><div class="status-icons">📶 🔋</div></div>
+  <div class="nav-bar">
+    <span style="font-size:20px; cursor:pointer;" onclick="showScreen('uploaded')">←</span>
+    <div class="nav-logo" style="margin:auto;"><span class="z">Z</span>Zachet.KZ</div>
+    <div class="nav-avatar">ОГ</div>
+  </div>
+  <div class="content">
+    <div class="label">Проверка данных</div>
+    <!-- VALID STATE -->
+    <div class="card card-green" style="margin-bottom:16px;">
+      <div style="display:flex; align-items:center; gap:10px; margin-bottom:12px;">
+        <span style="font-size:22px;">✅</span>
+        <div style="font-size:14px; font-weight:700; color:var(--green);">Данные актуальны</div>
+      </div>
+      <p style="font-size:12px; color:var(--gray-600);">Файл содержит данные за текущий период. Обновлений с последней загрузки не обнаружено.</p>
+    </div>
+    <div class="search-stats">
+      <div class="search-row"><span class="search-key">Последнее обновление</span><span class="search-val">Сегодня, 14:32</span></div>
+      <div class="search-row"><span class="search-key">Контрагентов</span><span class="search-val">27</span></div>
+      <div class="search-row"><span class="search-key">Объём задолженностей</span><span class="search-val-blue">86 400 000 ₸</span></div>
+    </div>
+    <div class="btn-row" style="margin-top:16px;">
+      <button class="btn btn-secondary" onclick="showScreen('upload')">Загрузить другой файл</button>
+      <button class="btn btn-primary" onclick="showScreen('search')">✓ Подтвердить данные</button>
+    </div>
+    <div class="divider"></div>
+    <!-- STALE STATE example -->
+    <div class="label">Пример: устаревшие данные</div>
+    <div class="card card-red">
+      <div style="display:flex; align-items:center; gap:10px; margin-bottom:10px;">
+        <span style="font-size:22px;">🚫</span>
+        <div style="font-size:14px; font-weight:700; color:var(--red);">Данные устарели — загрузка отклонена</div>
+      </div>
+      <p style="font-size:12px; color:var(--gray-600);">Файл содержит данные за <strong>март 2024</strong>. Система принимает данные не старше 20 дней.</p>
+      <div style="margin-top:10px; display:flex; justify-content:space-between; font-size:12px;">
+        <span style="color:var(--gray-600);">Дата данных в файле</span>
+        <span style="color:var(--red); font-weight:700;">март 2024 ⚠️</span>
+      </div>
+      <div style="display:flex; justify-content:space-between; font-size:12px; margin-top:6px;">
+        <span style="color:var(--gray-600);">Максимальный возраст данных</span>
+        <span style="font-weight:700;">20 дней</span>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- ================== SCREEN 6: SEARCH ================== -->
+
+<div class="screen" id="screen-search">
+  <div class="status-bar"><span>9:41</span><div class="status-icons">📶 🔋</div></div>
+  <div class="nav-bar">
+    <div class="nav-logo" style="margin:auto;"><span class="z">Z</span>Zachet.KZ</div>
+    <div class="nav-avatar">ОГ</div>
+  </div>
+  <div class="content" style="text-align:center; padding-top:32px;">
+    <div style="font-size:52px; margin-bottom:12px; animation: spin 2s linear infinite;">🔄</div>
+    <h2>Ищем цепочки...</h2>
+    <p style="margin-top:6px;">Система работает автоматически 24/7</p>
+    <div class="search-stats" style="text-align:left; margin-top:24px;">
+      <div class="search-row"><span class="search-key">Компаний в сети</span><span class="search-val">47</span></div>
+      <div class="search-row"><span class="search-key">Связей задолженности</span><span class="search-val">132</span></div>
+      <div class="search-row"><span class="search-key">Проверено цепочек</span><span class="search-val-blue">5 218 / ~50 000</span></div>
+    </div>
+    <div class="progress-bar" style="margin: 12px 0;">
+      <div class="progress-fill" style="width:10%;"></div>
+    </div>
+    <p style="font-size:11px; color:var(--gray-400);">10%</p>
+    <div class="info-banner" style="text-align:left; margin-top:16px;">
+      <span class="info-icon">ℹ️</span>
+      <div class="info-text">Поиск продолжается даже после закрытия браузера. Вы получите уведомление как только найдётся цепочка.</div>
+    </div>
+    <button class="btn btn-primary" style="margin-top:8px;" onclick="showScreen('prelock')">Симулировать: Цепочка найдена!</button>
+    <button class="btn btn-ghost" onclick="showScreen('dash')">← На главную</button>
+  </div>
+  <style>@keyframes spin { from { transform: rotate(0deg); } to { transform: rotate(360deg); } }</style>
+</div>
+
+<!-- ================== SCREEN 6b: PRE-LOCK ================== -->
+
+<div class="screen" id="screen-prelock">
+  <div class="status-bar"><span>9:41</span><div class="status-icons">📶 🔋</div></div>
+  <div class="nav-bar">
+    <div class="nav-logo"><span class="z">Z</span>Zachet.KZ</div>
+    <div style="margin-left:auto; font-size:12px; font-weight:600; color:var(--green); background:var(--green-pale); padding:4px 10px; border-radius:20px;">🟢 Найдена цепочка!</div>
+    <div class="nav-avatar" style="margin-left:8px;">ОГ</div>
+  </div>
+  <div class="content">
+    <div class="lock-badge lb-pre">🔵 PRE-LOCK активирован</div>
+    <p style="font-size:12px; color:var(--gray-500); margin-bottom:12px;">Цепочка зарезервирована для вас на 15 минут. Ознакомьтесь с результатом. Глобальная блокировка ещё не активна.</p>
+    <div class="lock-meta">
+      <div class="lock-meta-item">👁️ Только просмотр</div>
+      <div class="lock-meta-item">⏱️ 15 минут</div>
+      <div class="lock-meta-item">🔓 Не глобальный</div>
+      <div class="lock-meta-item">📋 Для решения</div>
+    </div>
+    <div class="timer-box">
+      <span class="timer-label">⏳ Pre-Lock истекает через</span>
+      <span class="timer-value" id="prelock-timer">14:52</span>
+    </div>
+    <div class="label">Цепочка взаимозачёта:</div>
+    <div class="chain">
+      <div class="chain-node"><div class="chain-circle">A</div><div class="chain-name">ТОО «АгроТрейд»</div><div class="chain-amount">6.2M ₸</div></div>
+      <div class="chain-arrow">→</div>
+      <div class="chain-node"><div class="chain-circle">B</div><div class="chain-name">ТОО «Семигаз»</div><div class="chain-amount">4.8M ₸</div></div>
+      <div class="chain-arrow">→</div>
+      <div class="chain-node"><div class="chain-circle">C</div><div class="chain-name">ТОО «СитаСервис»</div><div class="chain-amount">3.9M ₸</div></div>
+      <div class="chain-arrow">→</div>
+      <div class="chain-node"><div class="chain-circle">D</div><div class="chain-name">ТОО «BestAgro»</div><div class="chain-amount">3.9M ₸</div></div>
+    </div>
+    <div class="btn-row" style="margin-top:20px;">
+      <button class="btn btn-outline-red" onclick="showScreen('dash')">Не интересует</button>
+      <button class="btn btn-primary" onclick="showScreen('intentlock')">Продолжить →</button>
+    </div>
+  </div>
+</div>
+
+<!-- ================== SCREEN 7: DEBT LOCK V3 INFO ================== -->
+
+<div class="screen" id="screen-debtlock">
+  <div class="status-bar"><span>9:41</span><div class="status-icons">📶 🔋</div></div>
+  <div class="nav-bar">
+    <span style="font-size:20px; cursor:pointer;" onclick="showScreen('prelock')">←</span>
+    <div class="nav-logo" style="margin:auto;"><span class="z">Z</span>Zachet.KZ</div>
+    <div class="nav-avatar">ОГ</div>
+  </div>
+  <div class="content">
+    <div class="label">КАК РАБОТАЕТ DEBT LOCK V3</div>
+    <div class="card" style="margin-bottom:10px;">
+      <div style="font-size:11px; font-weight:700; color:var(--blue); margin-bottom:4px;">1 &nbsp; PRE-LOCK &nbsp; <span style="color:var(--blue);">15 мин</span></div>
+      <p style="font-size:13px;">Цепочка найдена. Только для просмотра. Вы решаете — продолжить или нет. Глобальной блокировки нет.</p>
+    </div>
+    <div class="card" style="margin-bottom:10px;">
+      <div style="font-size:11px; font-weight:700; color:var(--purple); margin-bottom:4px;">2 &nbsp; INTENT LOCK &nbsp; <span style="color:var(--purple);">до 2 ч</span></div>
+      <p style="font-size:13px;">Вы нажали «Продолжить». Цепочка частично заморожена. Система уведомляет всех участников. Ждём их подтверждения.</p>
+    </div>
+    <div class="card" style="margin-bottom:10px;">
+      <div style="font-size:11px; font-weight:700; color:var(--orange); margin-bottom:4px;">3 &nbsp; HARD DEBT LOCK &nbsp; <span style="color:var(--orange);">48 ч</span></div>
+      <p style="font-size:13px;">Все участники подтвердили. Полная блокировка долгов. Юридическая сила. Отмена невозможна.</p>
+    </div>
+    <div class="hint-box">
+      <span class="hint-icon">💡</span>
+      <div class="hint-text">Такая архитектура защищает от ситуации, когда один участник замораживает чужие долги без их согласия. Hard Lock активируется только когда ВСЕ согласились.</div>
+    </div>
+    <button class="btn btn-primary" style="margin-top:16px;" onclick="showScreen('prelock')">Понятно</button>
+  </div>
+</div>
+
+<!-- ================== SCREEN 7b: INTENT LOCK ================== -->
+
+<div class="screen" id="screen-intentlock">
+  <div class="status-bar"><span>9:41</span><div class="status-icons">📶 🔋</div></div>
+  <div class="nav-bar">
+    <div class="nav-logo"><span class="z">Z</span>Zachet.KZ</div>
+    <div class="nav-avatar" style="margin-left:auto;">ОГ</div>
+  </div>
+  <div class="content">
+    <div class="lock-badge lb-intent">🟣 INTENT LOCK</div>
+    <p style="font-size:12px; color:var(--gray-500); margin-bottom:12px;">Вы подтвердили намерение. Цепочка частично заблокирована. Ожидаем подтверждения от остальных участников.</p>
+    <div class="lock-meta">
+      <div class="lock-meta-item">🔐 Частичная блокировка</div>
+      <div class="lock-meta-item">⏱️ До 2 часов</div>
+      <div class="lock-meta-item">👥 Ждём всех</div>
+      <div class="lock-meta-item">↩️ Отменить можно</div>
+    </div>
+    <div class="timer-box">
+      <span class="timer-label">🟣 Intent Lock</span>
+      <span class="timer-value" style="color:var(--purple);">01:44:22</span>
+    </div>
+    <div class="label">Статус участников</div>
+    <div class="participant signed">
+      <div class="participant-info"><div class="participant-avatar">ОГ</div><div><div class="participant-name">ТОО «Семигаз» (Вы)</div><div class="participant-bin">050640054321</div></div></div>
+      <div class="status-badge status-signed">✓ Подтверждено</div>
+    </div>
+    <div class="participant pending">
+      <div class="participant-info"><div class="participant-avatar" style="background:var(--orange-pale); color:var(--orange);">АТ</div><div><div class="participant-name">ТОО «АгроТрейд»</div><div class="participant-bin">120840012345</div></div></div>
+      <div class="status-badge status-pending">Ожидает</div>
+    </div>
+    <div class="participant pending">
+      <div class="participant-info"><div class="participant-avatar" style="background:var(--orange-pale); color:var(--orange);">СС</div><div><div class="participant-name">ТОО «СитаСервис»</div></div></div>
+      <div class="status-badge status-pending">Ожидает</div>
+    </div>
+    <div class="participant pending">
+      <div class="participant-info"><div class="participant-avatar" style="background:var(--orange-pale); color:var(--orange);">БА</div><div><div class="participant-name">ТОО «BestAgro»</div></div></div>
+      <div class="status-badge status-pending">Ожидает</div>
+    </div>
+    <button class="btn btn-primary" style="margin-top:16px;" onclick="showScreen('hardlock')">Симулировать: все подтвердили →</button>
+  </div>
+</div>
+
+<!-- ================== SCREEN 7c: HARD LOCK ================== -->
+
+<div class="screen" id="screen-hardlock">
+  <div class="status-bar"><span>9:41</span><div class="status-icons">📶 🔋</div></div>
+  <div class="nav-bar">
+    <div class="nav-logo"><span class="z">Z</span>Zachet.KZ</div>
+    <div class="nav-avatar" style="margin-left:auto;">ОГ</div>
+  </div>
+  <div class="content">
+    <div class="lock-badge lb-hard">🔐 HARD DEBT LOCK</div>
+    <p style="font-size:12px; color:var(--gray-500); margin-bottom:12px;">Все участники подтвердили. Долги полностью заморожены на 48 часов. Юридическая сила активна.</p>
+    <div class="lock-meta">
+      <div class="lock-meta-item">🔒 Полная блокировка</div>
+      <div class="lock-meta-item">⏱️ 48 часов</div>
+      <div class="lock-meta-item">⚖️ Юр. сила</div>
+      <div class="lock-meta-item">🚫 Отмена невозможна</div>
+    </div>
+    <div class="timer-box">
+      <span class="timer-label">🔐 Hard Lock истекает</span>
+      <span class="timer-value">47:58:12</span>
+    </div>
+    <div class="card card-blue">
+      <div class="label label-blue">Зафиксировано</div>
+      <div style="display:flex; justify-content:space-between; margin-top:8px;">
+        <span style="font-size:13px; color:var(--gray-600);">Сумма цепочки</span>
+        <span style="font-family:'JetBrains Mono'; font-weight:800; color:var(--gray-900);">18 800 000 ₸</span>
+      </div>
+      <div style="display:flex; justify-content:space-between; margin-top:8px;">
+        <span style="font-size:13px; color:var(--gray-600);">Участников</span>
+        <span style="font-weight:800; color:var(--gray-900);">4 компании</span>
+      </div>
+    </div>
+    <button class="btn btn-primary" style="margin-top:8px;" onclick="showScreen('result')">Перейти к выбору тарифа →</button>
+  </div>
+</div>
+
+<!-- ================== SCREEN 8: MY RESULT ================== -->
+
+<div class="screen" id="screen-result">
+  <div class="status-bar"><span>9:41</span><div class="status-icons">📶 🔋</div></div>
+  <div class="nav-bar">
+    <div class="nav-logo"><span class="z">Z</span>Zachet.KZ</div>
+    <div class="nav-avatar" style="margin-left:auto;">ОГ</div>
+  </div>
+  <div class="content">
+    <div class="label">Ваш результат</div>
+    <div class="security-box" style="margin-bottom:16px;">
+      <span class="security-icon">🔒</span>
+      <div class="security-text">Вы видите только данные своей компании. Финансовые данные других участников конфиденциальны.</div>
+    </div>
+    <div class="card" style="margin-bottom:8px;">
+      <div class="label" style="color:var(--gray-400);">ТОО «СЕМИГАЗ»</div>
+      <div class="result-row"><span class="result-key">Задолженность до зачёта</span><span class="result-val">15 000 000 ₸</span></div>
+      <div class="result-row"><span class="result-key">Погашается через зачёт</span><span class="result-val result-val-green">−12 000 000 ₸</span></div>
+      <div class="result-total"><span class="result-total-key">Остаток</span><span class="result-total-val">3 000 000 ₸</span></div>
+    </div>
+    <button class="btn btn-primary" style="margin-top:8px;" onclick="showScreen('tariff')">Выбрать способ проведения →</button>
+  </div>
+</div>
+
+<!-- ================== SCREEN 8b: TARIFF CHOICE ================== -->
+
+<div class="screen" id="screen-tariff">
+  <div class="status-bar"><span>9:41</span><div class="status-icons">📶 🔋</div></div>
+  <div class="nav-bar">
+    <span style="font-size:20px; cursor:pointer;" onclick="showScreen('result')">←</span>
+    <div class="nav-logo" style="margin:auto;"><span class="z">Z</span>Zachet.KZ</div>
+    <div class="nav-avatar">ОГ</div>
+  </div>
+  <div class="content">
+    <div class="label">Способ проведения зачёта</div>
+    <p style="font-size:12px; color:var(--gray-500); margin-bottom:16px;">Цепочка на <strong style="color:var(--blue);">18 800 000 ₸</strong> · 4 компании · Подписка активна</p>
+    <div class="plan-row">
+      <div class="plan-card" onclick="showScreen('sign')">
+        <div style="font-size:13px; font-weight:700; color:var(--gray-700);">Самостоятельно</div>
+        <div style="font-size:20px; font-weight:900; color:var(--blue); margin:8px 0;">Включено</div>
+        <div style="font-size:10px; color:var(--gray-400); margin-bottom:8px;">в подписку</div>
+        <ul class="plan-features">
+          <li>Данные участников</li>
+          <li>Вы проводите сами</li>
+          <li class="no">Без ЭЦП на платформе</li>
+          <li class="no">Без XML для 1С</li>
+        </ul>
+      </div>
+      <div class="plan-card recommended" onclick="showScreen('sign')">
+        <div class="plan-badge">Рекомендуем</div>
+        <div style="font-size:13px; font-weight:700; color:var(--gray-700);">Через платформу</div>
+        <div style="font-family:'JetBrains Mono'; font-size:22px; font-weight:900; color:var(--blue); margin:6px 0;">30 000 ₸</div>
+        <div style="font-size:10px; color:var(--gray-400); margin-bottom:8px;">за эту сделку</div>
+        <ul class="plan-features">
+          <li>Платформа собирает ЭЦП</li>
+          <li>Акт взаимозачёта PDF</li>
+          <li>XML файл для 1С</li>
+          <li>Юр. чистота</li>
+        </ul>
+      </div>
+    </div>
+    <div class="hint-box">
+      <span class="hint-icon">💡</span>
+      <div class="hint-text">30 000 ₸ платит каждый участник. Если в цепочке 4 компании — платформа зарабатывает 120 000 ₸ с одной сделки.</div>
+    </div>
+  </div>
+</div>
+
+<!-- ================== SCREEN 9: SIGNING ================== -->
+
+<div class="screen" id="screen-sign">
+  <div class="status-bar"><span>9:41</span><div class="status-icons">📶 🔋</div></div>
+  <div class="nav-bar">
+    <span style="font-size:20px; cursor:pointer;" onclick="showScreen('tariff')">←</span>
+    <div class="nav-logo" style="margin:auto;"><span class="z">Z</span>Zachet.KZ</div>
+    <div class="nav-avatar">ОГ</div>
+  </div>
+  <div class="content">
+    <div class="label">Подписание акта</div>
+    <div class="card card-orange" style="margin-bottom:16px;">
+      <div style="display:flex; align-items:center; gap:8px; margin-bottom:6px;">
+        <span style="font-size:20px;">✏️</span>
+        <div style="font-size:14px; font-weight:700; color:var(--orange);">Требуется ваша ЭЦП</div>
+      </div>
+      <p style="font-size:12px; color:var(--gray-600);">Скачайте акт, подпишите электронной подписью и загрузите обратно</p>
+    </div>
+    <div class="sign-step">
+      <div class="sign-step-num done">✓</div>
+      <div class="sign-step-content"><div class="sign-step-title">Оплата прошла</div><div class="sign-step-sub">30 000 ₸ · Kaspi Pay</div></div>
+    </div>
+    <div class="sign-step">
+      <div class="sign-step-num">2</div>
+      <div class="sign-step-content"><div class="sign-step-title">Скачать и подписать акт</div><div class="sign-step-sub">Подпишите в eGov или другом сервисе ЭЦП</div></div>
+    </div>
+    <div class="sign-step" style="border-bottom:none;">
+      <div class="sign-step-num">3</div>
+      <div class="sign-step-content"><div class="sign-step-title">Загрузить подписанный файл</div><div class="sign-step-sub" style="color:var(--orange);">Ожидается</div></div>
+    </div>
+    <div class="btn-row" style="margin-top:16px;">
+      <button class="doc-btn">⬇️ Скачать акт</button>
+      <button class="doc-btn doc-btn-green" onclick="showScreen('signstatus')">⬆️ Загрузить подписанный</button>
+    </div>
+  </div>
+</div>
+
+<!-- ================== SCREEN 9b: SIGN STATUS ================== -->
+
+<div class="screen" id="screen-signstatus">
+  <div class="status-bar"><span>9:41</span><div class="status-icons">📶 🔋</div></div>
+  <div class="nav-bar">
+    <div class="nav-logo"><span class="z">Z</span>Zachet.KZ</div>
+    <div class="nav-avatar" style="margin-left:auto;">ОГ</div>
+  </div>
+  <div class="content">
+    <div class="label">Статус подписей</div>
+    <div class="timer-box" style="margin-bottom:16px;">
+      <span class="timer-label">🔐 Hard Lock</span>
+      <span class="timer-value">32:14:08</span>
+    </div>
+    <div class="participant signed">
+      <div class="participant-info"><div class="participant-avatar">АТ</div><div><div class="participant-name">ТОО «АгроТрейд»</div></div></div>
+      <div class="status-badge status-signed">✓ Подписано</div>
+    </div>
+    <div class="participant pending">
+      <div class="participant-info"><div class="participant-avatar" style="background:var(--orange-pale); color:var(--orange);">ОГ</div><div><div class="participant-name">ТОО «Семигаз» (Вы)</div></div></div>
+      <div class="status-badge status-pending">⏳ Ожидается</div>
+    </div>
+    <div class="participant signed">
+      <div class="participant-info"><div class="participant-avatar">СС</div><div><div class="participant-name">ТОО «СитаСервис»</div></div></div>
+      <div class="status-badge status-signed">✓ Подписано</div>
+    </div>
+    <div class="participant pending">
+      <div class="participant-info"><div class="participant-avatar" style="background:var(--orange-pale); color:var(--orange);">БА</div><div><div class="participant-name">ТОО «BestAgro»</div></div></div>
+      <div class="status-badge status-pending">⏳ Ожидается</div>
+    </div>
+    <p style="font-size:12px; color:var(--gray-500); text-align:center; margin-top:12px;">Когда все подпишут — документы формируются автоматически. Вы получите уведомление.</p>
+    <button class="btn btn-primary" style="margin-top:16px;" onclick="showScreen('done')">Симулировать: все подписали →</button>
+  </div>
+</div>
+
+<!-- ================== SCREEN 10: DONE ================== -->
+
+<div class="screen" id="screen-done">
+  <div class="status-bar"><span>9:41</span><div class="status-icons">📶 🔋</div></div>
+  <div class="nav-bar">
+    <div class="nav-logo"><span class="z">Z</span>Zachet.KZ</div>
+    <div class="nav-avatar" style="margin-left:auto;">ОГ</div>
+  </div>
+  <div class="success-hero">
+    <span class="success-emoji">🎉</span>
+    <div class="success-title">Взаимозачёт завершён!</div>
+    <div class="success-sub">Все подписи получены. Документы сформированы.</div>
+  </div>
+  <div class="content">
+    <div class="card card-green">
+      <div style="display:flex; justify-content:space-between; align-items:center; padding:8px 0; border-bottom:1px solid #A7F3D0;">
+        <span style="font-size:14px; color:var(--gray-600);">Погашено задолженности</span>
+        <span style="font-family:'JetBrains Mono'; font-size:18px; font-weight:800; color:var(--green);">12 000 000 ₸</span>
+      </div>
+      <div style="display:flex; justify-content:space-between; align-items:center; padding:8px 0 0;">
+        <span style="font-size:14px; color:var(--gray-600);">Ваш бонус (как бухгалтер)</span>
+        <span style="font-family:'JetBrains Mono'; font-size:18px; font-weight:800; color:var(--green);">+21 150 ₸</span>
+      </div>
+    </div>
+    <button class="doc-btn" style="margin-top:16px;">⬇️ Скачать акт взаимозачёта (PDF)</button>
+    <button class="doc-btn doc-btn-green">⬇️ Скачать XML для 1С</button>
+    <button class="btn btn-secondary" style="margin-top:8px;" onclick="showScreen('history')">← К истории сделок</button>
+  </div>
+</div>
+
+<!-- ================== SCREEN 11: HISTORY ================== -->
+
+<div class="screen" id="screen-history">
+  <div class="status-bar"><span>9:41</span><div class="status-icons">📶 🔋</div></div>
+  <div class="nav-bar">
+    <div class="nav-logo"><span class="z">Z</span>Zachet.KZ</div>
+    <div class="nav-tabs">
+      <span class="nav-tab" onclick="showScreen('dash')">Главная</span>
+      <span class="nav-tab active">Сделки</span>
+      <span class="nav-tab" onclick="showScreen('income')">Доходы</span>
+    </div>
+    <div class="nav-avatar">ОГ</div>
+  </div>
+  <div style="display:flex; gap:0; border-bottom: 1px solid var(--gray-200); overflow-x:auto;">
+    <div style="padding:10px 14px; font-size:12px; font-weight:700; color:var(--blue); border-bottom:2px solid var(--blue); cursor:pointer; white-space:nowrap;">Все</div>
+    <div style="padding:10px 14px; font-size:12px; color:var(--gray-500); cursor:pointer; white-space:nowrap;">Успешные</div>
+    <div style="padding:10px 14px; font-size:12px; color:var(--gray-500); cursor:pointer; white-space:nowrap;">Незавершённые</div>
+    <div style="padding:10px 14px; font-size:12px; color:var(--gray-500); cursor:pointer; white-space:nowrap;">Отменённые</div>
+  </div>
+  <div class="content">
+    <div class="history-item" onclick="showScreen('done')">
+      <div class="history-icon hi-success">✅</div>
+      <div class="history-info"><div class="history-title">Взаимозачёт #2475 · ТОО «АгроТрейд»</div><div class="history-sub">4 участника · Pro · 12 марта 2026</div></div>
+      <div class="history-right"><div class="history-amount">12 000 000 ₸</div><div class="history-status hs-success">Завершён</div></div>
+    </div>
+    <div class="history-item" onclick="showScreen('done')">
+      <div class="history-icon hi-success">✅</div>
+      <div class="history-info"><div class="history-title">Взаимозачёт #2471 · ТОО «Семигаз»</div><div class="history-sub">3 участника · Pro · 2 марта 2026</div></div>
+      <div class="history-right"><div class="history-amount">8 400 000 ₸</div><div class="history-status hs-success">Завершён</div></div>
+    </div>
+    <div class="history-item" onclick="showScreen('failtime')">
+      <div class="history-icon hi-fail">❌</div>
+      <div class="history-info"><div class="history-title">Взаимозачёт #2468 · ТОО «ЛогистикПлюс»</div><div class="history-sub">Участник не подписал в течение 48 ч</div></div>
+      <div class="history-right"><div class="history-amount">8 000 000 ₸</div><div class="history-status hs-fail">Не завершён</div></div>
+    </div>
+    <div class="history-item" onclick="showScreen('failrefuse')">
+      <div class="history-icon hi-cancel">🚫</div>
+      <div class="history-info"><div class="history-title">Взаимозачёт #2462 · ТОО «АльфаФуд»</div><div class="history-sub">Участник отказался от взаимозачёта</div></div>
+      <div class="history-right"><div class="history-amount">5 200 000 ₸</div><div class="history-status hs-cancel">Отменён</div></div>
+    </div>
+  </div>
+</div>
+
+<!-- ================== SCREEN 11a: FAIL - TIMEOUT ================== -->
+
+<div class="screen" id="screen-failtime">
+  <div class="status-bar"><span>9:41</span><div class="status-icons">📶 🔋</div></div>
+  <div class="nav-bar">
+    <span style="font-size:20px; cursor:pointer;" onclick="showScreen('history')">←</span>
+    <div class="nav-logo" style="margin:auto;"><span class="z">Z</span>Zachet.KZ</div>
+    <div class="nav-avatar">ОГ</div>
+  </div>
+  <div class="content">
+    <div style="display:flex; justify-content:space-between; align-items:flex-start; margin-bottom:8px;">
+      <div>
+        <div style="font-size:13px; font-weight:700; color:var(--red);">⏰ СДЕЛКА #2468 — НЕ ЗАВЕРШЕНА</div>
+        <div style="font-size:11px; color:var(--gray-400);">ТОО «ЛогистикПлюс» · 3 участника · Pro</div>
+      </div>
+    </div>
+    <div class="locked-amount"><div class="locked-num">8 000 000 ₸</div></div>
+    <div class="card card-red" style="margin: 12px 0;">
+      <div style="display:flex; align-items:center; gap:8px; margin-bottom:6px;">
+        <span style="font-size:20px;">⏰</span>
+        <div style="font-size:13px; font-weight:700; color:var(--red);">Hard Lock истёк — не все подписали</div>
+      </div>
+      <p style="font-size:12px; color:var(--gray-600);">48 часов прошло. ТОО «ЛогистикПлюс» не загрузил подписанный акт. Сделка автоматически аннулирована.</p>
+    </div>
+    <div class="label">Статус участников</div>
+    <div class="participant signed"><div class="participant-info"><div class="participant-avatar">ОГ</div><div><div class="participant-name">ТОО «Семигаз» (Вы)</div><div class="participant-bin">050640054321</div></div></div><div class="status-badge status-signed">✓ Подписано</div></div>
+    <div class="participant refused"><div class="participant-info"><div class="participant-avatar" style="background:var(--red-pale); color:var(--red);">ЛП</div><div><div class="participant-name">ТОО «ЛогистикПлюс»</div><div class="participant-bin">180340067890</div></div></div><div class="status-badge status-refused">Не подписал</div></div>
+    <div class="participant signed"><div class="participant-info"><div class="participant-avatar">АТ</div><div><div class="participant-name">ТОО «АгроТрейд»</div><div class="participant-bin">120840012345</div></div></div><div class="status-badge status-signed">✓ Подписано</div></div>
+    <div class="what-next">
+      <div class="what-next-title">💡 ЧТО ДЕЛАТЬ ДАЛЬШЕ</div>
+      <div class="next-item"><span class="next-arrow">→</span> Написать бухгалтеру ТОО «ЛогистикПлюс» напрямую</div>
+      <div class="next-item" onclick="showScreen('intentlock')"><span class="next-arrow">→</span> Попробовать запустить эту цепочку заново</div>
+      <div class="next-item"><span class="next-arrow">→</span> Поискать альтернативную цепочку без этой компании</div>
+    </div>
+    <div class="btn-row" style="margin-top:16px;">
+      <button class="btn btn-secondary" onclick="showScreen('history')">Закрыть</button>
+      <button class="btn btn-primary" onclick="showScreen('search')">🔄 Перезапустить</button>
+    </div>
+  </div>
+</div>
+
+<!-- ================== SCREEN 11b: FAIL - REFUSED ================== -->
+
+<div class="screen" id="screen-failrefuse">
+  <div class="status-bar"><span>9:41</span><div class="status-icons">📶 🔋</div></div>
+  <div class="nav-bar">
+    <span style="font-size:20px; cursor:pointer;" onclick="showScreen('history')">←</span>
+    <div class="nav-logo" style="margin:auto;"><span class="z">Z</span>Zachet.KZ</div>
+    <div class="nav-avatar">ОГ</div>
+  </div>
+  <div class="content">
+    <div style="font-size:13px; font-weight:700; color:var(--red); margin-bottom:4px;">🚫 СДЕЛКА #2462 — ОТМЕНЕНА</div>
+    <div style="font-size:11px; color:var(--gray-400); margin-bottom:8px;">ТОО «АльфаФуд» · 4 участника · Pro</div>
+    <div class="locked-amount"><div class="locked-num">5 200 000 ₸</div></div>
+    <div class="card card-red" style="margin: 12px 0;">
+      <div style="display:flex; align-items:center; gap:8px; margin-bottom:6px;"><span style="font-size:20px;">🚫</span><div style="font-size:13px; font-weight:700; color:var(--red);">Участник отказался от зачёта</div></div>
+      <p style="font-size:12px; color:var(--gray-600);">ТОО «АльфаФуд» отклонил предложение на стадии Intent Lock. Причина не указана. Блокировка снята.</p>
+    </div>
+    <div class="label">Статус участников</div>
+    <div class="participant signed"><div class="participant-info"><div class="participant-avatar">ОГ</div><div><div class="participant-name">ТОО «Семигаз» (Вы)</div></div></div><div class="status-badge status-signed">✓ Принял</div></div>
+    <div class="participant refused"><div class="participant-info"><div class="participant-avatar" style="background:var(--red-pale); color:var(--red);">АФ</div><div><div class="participant-name">ТОО «АльфаФуд»</div><div class="participant-bin" style="color:var(--red);">Причина отказа не указана</div></div></div><div class="status-badge status-refused">Отказал</div></div>
+    <div class="participant signed"><div class="participant-info"><div class="participant-avatar">АТ</div><div><div class="participant-name">ТОО «АгроТрейд»</div></div></div><div class="status-badge status-signed">✓ Принял</div></div>
+    <div class="what-next">
+      <div class="what-next-title">💡 ЧТО ДЕЛАТЬ ДАЛЬШЕ</div>
+      <div class="next-item"><span class="next-arrow">→</span> Поиск цепочки без ТОО «АльфаФуд» уже запущен</div>
+      <div class="next-item"><span class="next-arrow">→</span> Система найдёт альтернативу автоматически</div>
+      <div class="next-item"><span class="next-arrow">→</span> Вы получите уведомление как только появится новая цепочка</div>
+    </div>
+    <div class="hint-box" style="margin-top:8px;">
+      <span class="hint-icon">🤖</span>
+      <div class="hint-text"><span style="color:var(--blue); font-weight:700;">Алгоритм:</span> вероятность найти цепочку без АльфаФуд — <strong>высокая</strong>. Проверяем 47 компаний.</div>
+    </div>
+    <div class="btn-row" style="margin-top:16px;">
+      <button class="btn btn-secondary" onclick="showScreen('history')">Понятно</button>
+      <button class="btn btn-ghost">Жду уведомление</button>
+    </div>
+  </div>
+</div>
+
+<!-- ================== SCREEN 11c: FAIL - NO CHAIN ================== -->
+
+<div class="screen" id="screen-failchain">
+  <div class="status-bar"><span>9:41</span><div class="status-icons">📶 🔋</div></div>
+  <div class="nav-bar">
+    <span style="font-size:20px; cursor:pointer;" onclick="showScreen('dash')">←</span>
+    <div class="nav-logo" style="margin:auto;"><span class="z">Z</span>Zachet.KZ</div>
+    <div class="nav-avatar">ОГ</div>
+  </div>
+  <div class="content">
+    <div class="label">Анализ задолженности</div>
+    <div style="font-size:11px; color:var(--gray-500); margin-bottom:12px;">ТОО «БестАгро» · обновлено сегодня</div>
+    <h2 style="margin-bottom:6px;">Цепочка пока не найдена</h2>
+    <p style="font-size:13px; color:var(--gray-500); margin-bottom:16px;">Объём задолженности: <span style="font-family:'JetBrains Mono'; font-weight:700; color:var(--gray-900);">4 300 000 ₸</span></p>
+    <div class="card card-orange" style="margin-bottom:16px;">
+      <div style="display:flex; align-items:flex-start; gap:10px;">
+        <span style="font-size:20px;">📋</span>
+        <div>
+          <div style="font-size:13px; font-weight:700; color:var(--gray-800); margin-bottom:4px;">Почему цепочки ещё нет</div>
+          <p style="font-size:12px; color:var(--gray-600);">Из ваших 27 контрагентов только 3 сейчас есть в сети. Чем больше компаний загрузит данные — тем выше шанс зачёта.</p>
+        </div>
+      </div>
+    </div>
+    <div class="network-bar">
+      <div class="network-label"><span>Контрагентов в сети</span><span>3 из 27</span></div>
+      <div class="progress-bar"><div class="progress-fill" style="width:11%;"></div></div>
+      <div style="font-size:11px; color:var(--gray-400);">Сеть растёт каждую неделю</div>
+    </div>
+    <div class="what-next" style="margin-top:16px;">
+      <div class="what-next-title">⚡ УСКОРИТЬ ПОИСК</div>
+      <div class="next-item"><span class="next-arrow">→</span> Пригласить бухгалтеров ваших контрагентов в сеть</div>
+      <div class="next-item" onclick="showScreen('upload')"><span class="next-arrow">→</span> Загрузить данные других ваших компаний</div>
+      <div class="next-item"><span class="next-arrow">→</span> Поиск продолжается 24/7 — вы получите уведомление</div>
+    </div>
+    <div class="btn-row" style="margin-top:16px;">
+      <button class="btn btn-secondary" onclick="showScreen('dash')">Закрыть</button>
+      <button class="btn btn-primary">📨 Пригласить</button>
+    </div>
+  </div>
+</div>
+
+<!-- ================== SCREEN 12: INCOME ================== -->
+
+<div class="screen" id="screen-income">
+  <div class="status-bar"><span>9:41</span><div class="status-icons">📶 🔋</div></div>
+  <div class="nav-bar">
+    <div class="nav-logo"><span class="z">Z</span>Zachet.KZ</div>
+    <div class="nav-tabs">
+      <span class="nav-tab" onclick="showScreen('dash')">Главная</span>
+      <span class="nav-tab" onclick="showScreen('history')">Сделки</span>
+      <span class="nav-tab active">Доходы</span>
+    </div>
+    <div class="nav-avatar">ОГ</div>
+  </div>
+  <div class="content">
+    <div class="salary-card">
+      <div class="salary-label">Накоплено к выплате</div>
+      <div class="salary-amount">237 000 ₸</div>
+      <div class="salary-sub">Оксана Гринина · обновлено только что</div>
+    </div>
+    <div class="income-row">
+      <div class="income-box"><div class="income-box-label">С подписок</div><div class="income-box-val">85 000 ₸</div><div class="income-box-sub">17 компаний × ~5 000 ₸</div></div>
+      <div class="income-box"><div class="income-box-label">Pro-сделки</div><div class="income-box-val">130 000 ₸</div><div class="income-box-sub">за этот месяц</div></div>
+      <div class="income-box"><div class="income-box-label">Реферальные</div><div class="income-box-val">22 000 ₸</div><div class="income-box-sub">2 новых бухгалтера</div></div>
+    </div>
+    <div class="label">История выплат</div>
+    <div class="tx-row" style="font-size:10px; color:var(--gray-400); font-weight:700; border-bottom:1px solid var(--gray-200);">
+      <span>ДАТА</span><span>СУММА</span><span>ИСТОЧНИК</span><span>СТАТУС</span>
+    </div>
+    <div class="tx-row"><span class="tx-date">23 апр</span><span class="tx-amount">150 000 ₸</span><span class="tx-source">Pro-сделки</span><span class="tx-status-paid">Выплачено</span></div>
+    <div class="tx-row"><span class="tx-date">18 апр</span><span class="tx-amount">75 000 ₸</span><span class="tx-source" style="color:var(--gray-500);">Подписки</span><span class="tx-status-paid">Выплачено</span></div>
+    <div class="tx-row"><span class="tx-date">10 апр</span><span class="tx-amount">180 000 ₸</span><span class="tx-source">Pro-сделки</span><span class="tx-status-proc">В обработке</span></div>
+    <button class="btn btn-primary" style="margin-top:16px;">💳 Вывести средства</button>
+  </div>
+</div>
+
+<!-- ================== SCREEN 13: PROFILE ================== -->
+
+<div class="screen" id="screen-profile">
+  <div class="status-bar"><span>9:41</span><div class="status-icons">📶 🔋</div></div>
+  <div class="nav-bar">
+    <span style="font-size:20px; cursor:pointer;" onclick="showScreen('dash')">←</span>
+    <div class="nav-logo" style="margin:auto;"><span class="z">Z</span>Zachet.KZ</div>
+  </div>
+  <div class="profile-header">
+    <div class="profile-avatar-lg">ОГ</div>
+    <div class="profile-name">Оксана Гринина</div>
+    <div class="profile-role">Бухгалтер · 17 компаний</div>
+    <div class="profile-badge">Pro подписка активна</div>
+    <button class="btn btn-secondary btn-sm" style="margin-top:10px; display:inline-block; width:auto; padding:8px 20px;">Изменить</button>
+  </div>
+  <div class="content">
+    <div class="label">МОИ КОМПАНИИ</div>
+    <div class="info-banner">
+      <span class="info-icon">💡</span>
+      <div class="info-text">БИН компании определяется автоматически из загружаемого файла. Новые компании появляются здесь после первой загрузки их данных.</div>
+    </div>
+    <div class="company-row">
+      <div><div class="company-name">ТОО «АгроТрейд»</div><div class="company-bin">120840012345</div><div class="company-auto">добавлена автоматически</div></div>
+      <div style="color:var(--green); font-size:12px; font-weight:700;">Активна</div>
+    </div>
+    <div class="company-row">
+      <div><div class="company-name">ТОО «Семигаз»</div><div class="company-bin">050640054321</div><div class="company-auto">добавлена автоматически</div></div>
+      <div style="color:var(--green); font-size:12px; font-weight:700;">Активна</div>
+    </div>
+    <div class="company-row">
+      <div><div class="company-name">ТОО «БестАгро»</div><div class="company-bin">150140087654</div><div class="company-auto">добавлена автоматически</div></div>
+      <div style="color:var(--orange); font-size:12px; font-weight:700;">Устарели</div>
+    </div>
+    <div class="label" style="margin-top:16px;">РЕФЕРАЛЬНАЯ ССЫЛКА</div>
+    <div class="referral-box">
+      <span class="referral-link">zachet.kz/ref/OXANA2024</span>
+      <button class="copy-btn" onclick="navigator.clipboard&&navigator.clipboard.writeText('zachet.kz/ref/OXANA2024');this.textContent='Скопировано ✓'">Копировать</button>
+    </div>
+    <div class="btn-row" style="margin-top:16px;">
+      <button class="btn btn-outline" style="margin-bottom:0;">Реквизиты выплат</button>
+      <button class="btn btn-secondary" style="margin-bottom:0;" onclick="showScreen('onb1')">Выйти</button>
+    </div>
+  </div>
+</div>
+
+</div><!-- /phone-frame -->
+
+<div class="screen-counter" id="screenCounter">Онбординг 1/3</div>
+
+<script>
+const screenNames = {
+  'onb1': 'Онбординг 1/3',
+  'onb2': 'Онбординг 2/3',
+  'onb3': 'Онбординг 3/3',
+  'reg': '1. Регистрация',
+  'sub': '2. Подписка',
+  'dash': '3. Dashboard',
+  'upload': '4. Загрузка данных',
+  'uploaded': '4b. Данные получены',
+  'freshcheck': '5. Проверка актуальности',
+  'search': '6. Поиск цепочек',
+  'prelock': '6b. Pre-Lock',
+  'debtlock': '7. Debt Lock V3',
+  'intentlock': '7b. Intent Lock',
+  'hardlock': '7c. Hard Lock',
+  'result': '8. Мой результат',
+  'tariff': '8b. Выбор тарифа',
+  'sign': '9. Подписание ЭЦП',
+  'signstatus': '9b. Статус подписей',
+  'done': '10. Документы готовы',
+  'history': '11. История сделок',
+  'failtime': '11a. Не подписал в срок',
+  'failrefuse': '11b. Участник отказался',
+  'failchain': '11c. Цепочка не нашлась',
+  'income': '12. Доходы бухгалтера',
+  'profile': '13. Профиль'
+};
+
+function showScreen(id) {
+  document.querySelectorAll('.screen').forEach(s => s.classList.remove('active'));
+  const target = document.getElementById('screen-' + id);
+  if (target) {
+    target.classList.add('active');
+    target.scrollTop = 0;
+  }
+  document.querySelectorAll('.screen-nav-btn').forEach(b => b.classList.remove('active'));
+  document.querySelectorAll('.screen-nav-btn').forEach(b => {
+    if (b.getAttribute('onclick') === `showScreen('${id}')`) b.classList.add('active');
+  });
+  const counter = document.getElementById('screenCounter');
+  if (counter) counter.textContent = screenNames[id] || id;
+}
+
+// Prelock timer countdown
+let prelockSec = 14 * 60 + 52;
+setInterval(() => {
+  const el = document.getElementById('prelock-timer');
+  if (el && prelockSec > 0) {
+    prelockSec--;
+    const m = Math.floor(prelockSec / 60);
+    const s = prelockSec % 60;
+    el.textContent = `${String(m).padStart(2,'0')}:${String(s).padStart(2,'0')}`;
+  }
+}, 1000);
+</script>
+
+</body>
+</html>
