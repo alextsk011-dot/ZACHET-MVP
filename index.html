@@ -2,76 +2,214 @@
 <html lang="ru">
 <head>
 <meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0">
-<title>Zachet.KZ — Платформа взаимозачётов</title>
-<link href="https://fonts.googleapis.com/css2?family=Golos+Text:wght@400;500;600;700;900&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
-<link rel="icon" href="data:,">
-<meta name="theme-color" content="#2563EB">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Zachet.KZ</title>
+
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600&display=swap" rel="stylesheet">
 
 <style>
-:root {
-  --blue: #2563EB;
-  --blue-light: #3B82F6;
-  --blue-pale: #EFF6FF;
-  --green: #10B981;
-  --green-pale: #ECFDF5;
-  --orange: #F59E0B;
-  --orange-pale: #FFFBEB;
-  --red: #EF4444;
-  --red-pale: #FEF2F2;
-  --gray-50: #F9FAFB;
-  --gray-100: #F3F4F6;
-  --gray-200: #E5E7EB;
-  --gray-300: #D1D5DB;
-  --gray-400: #9CA3AF;
-  --gray-500: #6B7280;
-  --gray-600: #4B5563;
-  --gray-700: #374151;
-  --gray-800: #1F2937;
-  --gray-900: #111827;
-  --purple: #8B5CF6;
-  --cyan: #06B6D4;
+body {
+  margin: 0;
+  font-family: 'Inter', sans-serif;
+  background: #f5f7fb;
 }
 
-* { margin: 0; padding: 0; box-sizing: border-box; -webkit-tap-highlight-color: transparent; }
+.app {
+  display: flex;
+}
 
-body {
-  font-family: 'Golos Text', sans-serif;
-  background: #0F172A;
-  min-height: 100vh;
+/* SIDEBAR */
+.sidebar {
+  width: 220px;
+  background: #ffffff;
+  height: 100vh;
+  padding: 20px;
+  box-shadow: 0 0 20px rgba(0,0,0,0.05);
+}
+
+.logo {
+  font-weight: 600;
+  font-size: 18px;
+  margin-bottom: 30px;
+}
+
+.menu div {
+  margin-bottom: 15px;
+  cursor: pointer;
+  color: #555;
+}
+
+.menu div:hover {
+  color: #2563eb;
+}
+
+/* CONTENT */
+.content {
+  flex: 1;
+  padding: 30px;
+}
+
+.header {
+  display: flex;
+  justify-content: space-between;
+  margin-bottom: 20px;
+}
+
+.card {
+  background: white;
+  border-radius: 16px;
+  padding: 20px;
+  margin-bottom: 20px;
+  box-shadow: 0 10px 25px rgba(0,0,0,0.05);
+}
+
+.grid {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 20px;
+}
+
+button {
+  padding: 12px;
+  border: none;
+  border-radius: 10px;
+  background: #2563eb;
+  color: white;
+  cursor: pointer;
+}
+
+/* GRAPH */
+.graph {
+  height: 200px;
+  background: linear-gradient(135deg,#e0ecff,#f5f7fb);
+  border-radius: 12px;
   display: flex;
   align-items: center;
   justify-content: center;
-  padding: 20px;
+  color: #2563eb;
+  font-weight: 600;
 }
 
-.phone-frame {
-  width: 390px;
-  min-height: 844px;
-  background: white;
-  border-radius: 44px;
-  overflow: hidden;
-  position: relative;
-  box-shadow: 0 0 0 12px #1E293B, 0 40px 80px rgba(0,0,0,0.6), 0 0 0 13px #334155;
+/* MODAL */
+.modal {
+  position: fixed;
+  top:0;
+  left:0;
+  width:100%;
+  height:100%;
+  background: rgba(0,0,0,0.4);
+  display:none;
+  align-items:center;
+  justify-content:center;
 }
 
-.screen { display:none; position:absolute; inset:0; background:white; overflow-y:auto; }
-.screen.active { display:block; }
-
+.modal-content {
+  background:white;
+  padding:20px;
+  border-radius:16px;
+  width:300px;
+}
 </style>
 </head>
 
 <body>
 
-<div class="phone-frame">
-  <div class="screen active">
-    <div style="padding:40px; text-align:center;">
-      <h1>Zachet.KZ MVP</h1>
-      <p>Файл успешно работает 🚀</p>
-      <p>Теперь просто загрузи его в Netlify Drop</p>
-    </div>
+<div class="app">
+
+<!-- SIDEBAR -->
+<div class="sidebar">
+  <div class="logo">Zachet.KZ</div>
+  <div class="menu">
+    <div onclick="screen('dashboard')">Dashboard</div>
+    <div onclick="screen('chains')">Цепочки</div>
+    <div onclick="screen('upload')">Загрузка</div>
   </div>
 </div>
+
+<!-- CONTENT -->
+<div class="content">
+
+<div id="dashboard">
+  <div class="header">
+    <h2>Dashboard</h2>
+    <button onclick="openModal()">+ Новый зачёт</button>
+  </div>
+
+  <div class="grid">
+    <div class="card">
+      <h3>Компании</h3>
+      <h1>17</h1>
+    </div>
+    <div class="card">
+      <h3>Зачёты</h3>
+      <h1>3</h1>
+    </div>
+  </div>
+
+  <div class="card">
+    <h3>Граф долгов</h3>
+    <div class="graph">Graph visualization</div>
+  </div>
+</div>
+
+<div id="chains" style="display:none">
+  <h2>Найденные цепочки</h2>
+
+  <div class="card">
+    <h3>Цепочка #1</h3>
+    <p>Компания A → B → C</p>
+    <b>18 800 000 ₸</b>
+    <br><br>
+    <button>Выполнить зачёт</button>
+  </div>
+
+  <div class="card">
+    <h3>Цепочка #2</h3>
+    <p>Компания X → Y → Z</p>
+    <b>7 200 000 ₸</b>
+  </div>
+</div>
+
+<div id="upload" style="display:none">
+  <h2>Загрузка данных</h2>
+
+  <div class="card">
+    <input type="file">
+    <br><br>
+    <button onclick="alert('Анализ запущен')">Запустить анализ</button>
+  </div>
+</div>
+
+</div>
+</div>
+
+<!-- MODAL -->
+<div class="modal" id="modal">
+  <div class="modal-content">
+    <h3>Новый зачёт</h3>
+    <input placeholder="Сумма">
+    <br><br>
+    <button onclick="closeModal()">Создать</button>
+  </div>
+</div>
+
+<script>
+function screen(name){
+  document.getElementById('dashboard').style.display='none';
+  document.getElementById('chains').style.display='none';
+  document.getElementById('upload').style.display='none';
+
+  document.getElementById(name).style.display='block';
+}
+
+function openModal(){
+  document.getElementById('modal').style.display='flex';
+}
+
+function closeModal(){
+  document.getElementById('modal').style.display='none';
+}
+</script>
 
 </body>
 </html>
